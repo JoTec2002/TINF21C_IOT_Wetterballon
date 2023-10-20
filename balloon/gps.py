@@ -1,140 +1,143 @@
 import serial
-import os, time
+import time
+from datetime import datetime
 
-#value for changed posotion
-change = 0.2
-#infos about the last send values
-lastSendLat = 0.0
-lastSendLong = 0.0
-lastSendAlt = 0.0
-lastSendTimeStamp = 0.0
 
-#current values (not needed)
-lat =0.0
-long = 0.0
-alt = 0.0
-timeStamp = 0.0
-
-#resets the GPS Modul via AT Command
-def reset():
-    port.flush
-    port.write(str.encode('AT+CGPSRST=1'+'\r\n'))
-    pass
-
-#Activates the GPS Module
-def setPWRtoGPS():
-    print("PWR")
-    port.flush()
-    port.write(str.encode('AT+CGPSPWR=1'+'\r\n'))
-    time.sleep(1)
-    pass
-
-#recieves the current GPS state of the GPS module
-def getLocationParams():
-    port.write(str.encode('AT+CGPSINF=0'+'\r\n'))
-    "port.write(str.encode('AT+CGPSSTATUS'+'\r\n'))"
-    print("INF")
-    time.sleep(5)
-    rcv="EMPTY"
-    if port.inWaiting()>0:
-        rcv = port.read(port.inWaiting())
-    else:
-        print("no data to read")
-    return str(rcv)
-
-#decodes the recieved GPS value to an array, that only includes longitude, latitude, altitude and the current UTC timestamp and returns the array
-def decodeAnswer(_answer):
-    print (_answer)
-    if _answer.count('OK') == 1:
-        tmp = _answer[_answer.find('+CGPSINF: ')+10:]
-        tmp = tmp.split(',')
-        return tmp[1:5]
-    else:
-        "raise ValueError"
-        time.sleep(0.1)
-
-#checks wheater the location has changed
-def locationChanged():
-    global long, lat, alt, lastSendLong, lastSendLat, lastSendAlt, change
-    print("Long: " + str(long) + "Last: " + str(lastSendLong) + "change: " + str(change))
-    if (long < (lastSendLong -change)) or (long > (lastSendLong + change)):
-        print("long changed")
-        return True
-    elif (lat < (lastSendLat - change)) or (lat > (lastSendLat + change)):
-        print("lat changed")
-        return True
-    elif (alt <(lastSendAlt - change)) or (alt > (lastSendAlt + change)):
-        print("alt changed")
-        return True
-    else:
-        print("nothing changed")
+def parse_response(response, message_command):
+    """
+    Parses the response from the GPS Module
+    :param response: the Response from the GPS Module
+    :param message_command: The Beginning of the response message usually "Command="
+    :return: returns a parsed message
+    """
+    response = str(response) #Make sure response is string
+    #check first if there is exactly one OK
+    if not response.count('OK') == 1:
+        # Error Message not correctly Formatted
         return False
 
-#the current "main" function of the GPS method to test its functionality
-def GPSmain():
-    global long, lat, alt, timeStamp, lastSendLong, lastSendLat, lastSendAlt, lastSendTimeStamp
-    port.read(port.inWaiting())
-    port.write(str.encode('AT+CGPSPWR?'+'\r\n'))
-    time.sleep(5)
-    tmp = str(port.read(port.inWaiting()))
-    print (tmp)
-    tmp = str(tmp).find('CGPSPWR: 1')
-    print (tmp)
-    if tmp != -1:
-        erg= decodeAnswer(getLocationParams())
-    else:
-        setPWRtoGPS()
-        port.read(port.inWaiting())
-        #pruefung ob GPS Value existiert fehlt noch
-        #in while schleife pruefen, fehlt so auch oben, vielleicht in die getLocationParams einbauen
-        print('setPower')
-        time.sleep(30)
-        erg= decodeAnswer(getLocationParams())
-    long = float(erg[0])
-    lat = float(erg[1])
-    alt = float(erg[2])
-    timeStamp = float(erg[3])
-#    print (erg) #only for testing
-    print ("Long " + str(long))
-    print ("Lat: " + str(lat))
-    print ("Alt: " + str(alt))
+    #try Parse Real Message beging
+    try:
+        start_index = response.index(message_command) + len(message_command)
+        response = response[start_index:]
 
-    _tmp = locationChanged()
-    print(_tmp)
-    if _tmp:
-        print("Location has changed")
-        lastSendLong = long
-        lastSendLat = lat
-        lastSendAlt = alt
-        lastSendTimeStamp = timeStamp
-        #Neuen Standort senden
-    else:
-        #pruefen auf zeit seit letzem senden und ggf. senden wiederholen um zu vermeiden, dass eine Stoerung nicht erkannt wird
-        print("Location has not changed")
+        end_index = response.index('\\r\\n')
+        response = response[:end_index]
+        return response.strip()
+    except ValueError:
+        return False
+def parse_gps_to_decimal(gps_in_degree):
+    """
+    Parses the GPS from dddmm.mmmmmm to decimal
+    :param gps_in_degree:
+    :return: gps_in_decimal
+    """
+    gps_in_degree = str(gps_in_degree)
 
-try:
-    print("START")
-    port = serial.Serial(port='/dev/ttyS0', baudrate=115200, timeout=1, xonxoff=True, exclusive=True)
-    print("OPEN")
-    port.write(str.encode('AT'+'\r\n'))
-    print("WRITE")
-    time.sleep(0.5)
-    print(port.read(10))
-    print("START-2")
-    while(1):
-        m = input("1 pwr oder 2 gps 3 reset 4 decodedString")
-        print(m)
-        if m == '1':
-            setPWRtoGPS()
-        elif m == '2':
-            print(getLocationParams())
-        elif m == '3':
-            reset()
-        elif m == '4':
-            GPSmain()
-        else:
-            print("ERROR__")
+    index = (gps_in_degree.index(".") - 2)
+    ddd = float(gps_in_degree[:index])
+    mmm = (float(gps_in_degree[index:]))/60
 
-except KeyboardInterrupt:
-    port.close()
-    print("End")
+    return ddd+mmm
+def parese_date_from_string_to_datetime(string_time):
+    datetime_object = datetime.strptime(string_time, '%Y%m%d%H%M%S.%f')
+    return datetime_object
+
+class Gps:
+    def __init__(self):
+        """
+        Defines class wide variables
+        :return:
+        """
+        self.Connection = serial.Serial(port='/dev/ttyS0', baudrate=115200, timeout=1, xonxoff=True, exclusive=True)
+        self.power = False
+
+
+        if not self.power_up():
+            # GPS power up not successful
+            # TODO: throw and Handle Error here
+            pass
+        print("GPS Powered UP!")
+
+        #Set GPS to correct output mode
+        res = self.send_command('AT+CGPSOUT?')
+        res = parse_response(res, 'CGPSOUT:')
+        if not res == str(0):
+            print(self.send_command('AT+CGPSOUT=0'))
+        print("GPS Output Mode set")
+
+
+        pass
+
+    def send_command(self, command):
+        """
+        Send command to GPS Interface and return native response
+        :param command: AT+Command
+        :return: response
+        """
+        self.Connection.write(str.encode(command + '\r\n'))
+        time.sleep(1)
+        return str(self.Connection.read(self.Connection.inWaiting()))
+
+    def power_up(self):
+        """
+        Makes sure the GPS Module is powered up.
+        :return: bool (successful response)
+        """
+        #Flush Buffer
+        self.Connection.read(self.Connection.inWaiting())
+        for x in range(5):
+            # Request Power State
+            self.Connection.write(str.encode('AT+CGPSPWR?' + '\r\n'))
+            #Wait and Check Response
+            time.sleep(1)
+            res = str(self.Connection.read(self.Connection.inWaiting()))
+            if 'CGPSPWR: 1' in res:
+                #gps powered up
+                return True
+            else:
+                # power up gps
+                print("GPS Power up Attempt: "+str(x))
+                self.Connection.write(str.encode('AT+CGPSPWR=1' + '\r\n'))
+                time.sleep(5)
+        # GPS not running after 5 Startup Attempts
+        return False
+
+    def read_location(self):
+        """
+        Read GPS Location Data
+        :return: Location Array
+        """
+        ret_array = {}
+
+        #get current gps status
+        status = self.send_command('AT+CGPSSTATUS?')
+        status_parsed = parse_response(status, "CGPSSTATUS:")
+        ret_array["status"] = status_parsed
+
+
+
+        location = self.send_command('AT+CGPSINF=0')
+        location_parsed = parse_response(location, "CGPSINF:")
+        location_array = location_parsed.split(',')
+        #location_array[0] = operating mode
+        if not location_array[0] == str(0):
+            # TODO: Error Handling
+            print("Error in Location Data")
+            return False
+
+        ret_array["tiff"] =             location_array[5]
+        ret_array["num_satellites"] =    location_array[6]
+        ret_array["speed"] =            location_array[7]
+        ret_array["course"] =           location_array[8]
+        ret_array["altitude"] =         float(location_array[3])
+
+        if not location_array[1] == '0.000000':
+            ret_array["longitude"] = (parse_gps_to_decimal(location_array[1]))
+
+        if not location_array[2] == '0.000000':
+            ret_array["latitude"] = (parse_gps_to_decimal(location_array[2]))
+
+        ret_array["utc_time"] = parese_date_from_string_to_datetime(location_array[4])
+
+        return ret_array
