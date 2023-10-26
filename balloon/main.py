@@ -17,7 +17,7 @@ class Main:
         logger.info("GPS init")
 
     def loop(self):
-        while(True):
+        while True:
             logger.info(self.GPS.read_location())
             time.sleep(20)
 
