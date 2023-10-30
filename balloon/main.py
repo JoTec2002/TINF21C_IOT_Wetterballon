@@ -7,7 +7,7 @@ license: MIT
 """
 import time
 from loguru import logger
-from gps import Gps
+from GPS.gps import Gps
 
 
 class Main:
