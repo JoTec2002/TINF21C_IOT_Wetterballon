@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="81f0db87-098a-4c66-b7d4-b4808f01704c" name="Changes" comment="" />
+    <list default="true" id="81f0db87-098a-4c66-b7d4-b4808f01704c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../esp32LoRa/loraWan.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../esp32LoRa/loraWan.cpp" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -42,7 +45,7 @@
     &quot;WebServerToolWindowPanel.toolwindow.show.date&quot;: &quot;false&quot;,
     &quot;WebServerToolWindowPanel.toolwindow.show.permissions&quot;: &quot;false&quot;,
     &quot;WebServerToolWindowPanel.toolwindow.show.size&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;2-lorawan-network&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/GitClones/TINF21C_IOT_Wetterballon/balloon/main.py&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -65,6 +68,8 @@
       <workItem from="1697784970299" duration="16086000" />
       <workItem from="1698316563910" duration="10052000" />
       <workItem from="1698342153292" duration="1065000" />
+      <workItem from="1698920082107" duration="26000" />
+      <workItem from="1698920172120" duration="602000" />
     </task>
     <servers />
   </component>
