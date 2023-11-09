@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "LoRaWan_APP.h"
+#include <Wire.h>
 
 /* OTAA para*/
 uint8_t devEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x06, 0x23, 0x9C };
@@ -72,8 +73,22 @@ static void prepareTxFrame( uint8_t port )
 
 RTC_DATA_ATTR bool firstrun = true;
 
+void onIicRecive(){
+    //TODO: Set appData[] to the Data I Wanna send
+    appDataSize = 4;
+    appData[0] = 0x00;
+    appData[1] = 0x01;
+    appData[2] = 0x02;
+    appData[3] = 0x03;
+
+    Serial.println(Wire.read());
+}
+
 void setup() {
+    //Serial init
     Serial.begin(115200);
+
+    //Lora init
     Mcu.begin();
     if(firstrun)
     {
@@ -83,7 +98,8 @@ void setup() {
     deviceState = DEVICE_STATE_INIT;
 
     /*custom further Setup here*/
-    //TODO: Register to I2C Bus from raspi
+    //IIC inity
+    Wire1.begin(0x8, 21, 22, 100000);
 }
 
 void loop()
@@ -107,9 +123,10 @@ void loop()
         case DEVICE_STATE_SEND:
         {
             LoRaWAN.displaySending();
+            //Tx Frame already prepared ad this point in future by onIicRecieve
             prepareTxFrame( appPort );
             LoRaWAN.send();
-            deviceState = DEVICE_STATE_CYCLE;
+            deviceState = DEVICE_STATE_SLEEP;
             break;
         }
         case DEVICE_STATE_CYCLE:
