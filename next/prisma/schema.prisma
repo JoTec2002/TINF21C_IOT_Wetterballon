@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Ballon {
+  id      Int      @id @default(autoincrement())
+  name    String
+  apikey  String
+  flights Flight[]
+}
+
+model Flight {
+  id    Int       @id @default(autoincrement())
+  name  String?
+  begin DateTime?
+  end   DateTime?
+
+  // ballon reference
+  ballonId           Int
+  ballon             Ballon               @relation(fields: [ballonId], references: [id])
+  gpsdata            gpsdata[]
+  humidityIndoor     humidityIndoor[]
+  humidityOutdoor    humidityOutdoor[]
+  temperatureIndoor  temperatureIndoor[]
+  temperatureOutdoor temperatureOutdoor[]
+  airpressure        airpressure[]
+}
+
+model gpsdata {
+  id   Int      @id @default(autoincrement())
+  time DateTime
+
+  satellites Int
+  speed      Float
+  course     Float
+  altitude   Float
+  longitude  Float
+  latitude   Float
+
+  flightId Int
+  flight   Flight @relation(fields: [flightId], references: [id])
+}
+
+model humidityIndoor {
+  id   Int      @id @default(autoincrement())
+  time DateTime
+
+  value Float
+
+  flightId Int
+  flight   Flight @relation(fields: [flightId], references: [id])
+}
+
+model humidityOutdoor {
+  id   Int      @id @default(autoincrement())
+  time DateTime
+
+  value Float
+
+  flightId Int
+  flight   Flight @relation(fields: [flightId], references: [id])
+}
+
+model temperatureIndoor {
+  id   Int      @id @default(autoincrement())
+  time DateTime
+
+  value Float
+
+  flightId Int
+  flight   Flight @relation(fields: [flightId], references: [id])
+}
+
+model temperatureOutdoor {
+  id   Int      @id @default(autoincrement())
+  time DateTime
+
+  value Float
+
+  flightId Int
+  flight   Flight @relation(fields: [flightId], references: [id])
+}
+
+model airpressure {
+  id   Int      @id @default(autoincrement())
+  time DateTime
+
+  value Int
+
+  flightId Int
+  flight   Flight @relation(fields: [flightId], references: [id])
+}
