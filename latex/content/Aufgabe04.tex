@@ -1,0 +1,35 @@
+\chapter{User Stories}
+
+\newcounter{StoryCounter}
+\setcounter{StoryCounter}{1}
+
+\newcommand{\UserStory}[2]{
+
+    \begin{tabularx}{\textwidth}{|X|r|}        
+            \hline
+            #1  & UST \theStoryCounter \\
+            \hline
+            \multicolumn{2}{|p{0.95\textwidth}|} {#2}\\
+            \hline
+    \end{tabularx}
+    \refstepcounter{StoryCounter}
+}
+
+% All User Stories
+
+\UserStory{Tickets erstellen}{Als Nutzer möchte ich Tickets erstellen können, sodass ich meien Probleme erfassen kann.  }
+\UserStory{Tickets bearbeiten}{Als Techniker möchte ich Tickets bearbeiten können, sodass ich meine Tätigkeit dokumentieren kann. }
+\UserStory{Terminmanagement}{Als Terminmanager möchte ich Termine verwalten können, damit ich transparent im System die Termine auf die einzlenen Kollegen aufteilen kann und diese die Tickets direkt an dem Termin abarbeiten können.}
+\UserStory{Hilfe Tools}{Als Techniker möchte ich Tools verwenden können, damit ich häufige Probleme direkt und einfach aus der App bearbeiten kann.}
+\UserStory{Wissensdatenbank}{Als Techniker möchte ich direkten Zugriff auf eine Wissensdatenbank haben, damit ich bei auftrettenden Problemen während des Termins überprüfen kann, ob die Lösung für das Problem bereits dokumentiert wurde.}
+\UserStory{Monitoring}{Als Techniker möchte ich ein Monitoring für jeden Kunden angezeigt bekommen, damit ich überwachen kann, wo Probleme bei Kunden auftretten.}
+\UserStory{Rapport}{Als Techniker möchte ich ein Rapport erstellen können, damit ich nach der Bearbeitung eines Tickets direkt den Rapport erhalte und dieser direkt von dem Kunden über einen Link unterschrieben werden kann}
+\UserStory{Wartungen durchführen}{Als Techniker möchte ich die Wartungen welche einmal im Quartal durchgeführt werden in dem Programm abarbeiten kann, damit diese sauber dokumentiert werden.} 
+\UserStory{Anmelden}{Als Nutzer möchte ich mich im System anmelden können, damit ich Zugriff auf alle meinen aktuellen Tickets habe und deren aktuellen Stand ansehen kann. }
+\UserStory{Bewertungen}{Als Manager möchte ich, dass der Kunde den Techniker bewerten kann, um die Kundenzufriedenheit zu überprüfen und gegebenenfalls weiter zu steigern. }
+
+\UserStory{Stammdatenverwaltung}{Als Manager möchte ich die Stammdaten der einzelnen Kunden über die Desktop App verwalten können.}
+
+
+In der ersten Version würde ich alle User Stories umsetzen, durch welche die grundlegenden Funktionen wie im vorhandenen Ticketsystem abgedeckt sind. Dies würde die User-Stories 1, 2, 7, 9 umfassen.
+Bewusst würde ich in der ersten Version die User-Stories 3, 4, 5, 6, 8 und 10 nicht umsetzen. Da der Benutzer vom vorhandenen Ticketsystem enttäuscht ist, ist es für Ihn zuerst wichtig das er in der ersten Version alle grundlegenden Funktionen nutzen kann und diese Ihnen zufriedenstellen. Die weiteren User-Stories welche nicht in der ersten Version eingebaut wurden, können anschließend in folgenden Versionen eingebaut werden. Dies bietet den Vorteil, dass der Benutzer in der Version 1 vom Ticketsystem überzeugt werden kann und sich für die weiteren Funktionen grundlegend mit dem System auskennt. 
