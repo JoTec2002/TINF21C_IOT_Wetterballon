@@ -10,6 +10,7 @@ import time
 import smbus2
 from loguru import logger
 from BME280.Mbme280 import Mbme280
+from Communication.communication import Communication
 from GPS.gps import Gps
 from MPU9050.mpu9050 import MPU9050
 
@@ -30,6 +31,8 @@ class Main:
 
         self.MPU9050 = MPU9050()
         logger.info("MPU9050 init successful")
+
+        Communication(bus)
 
     def loop(self):
         while True:
