@@ -1,6 +1,5 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { type NextRequest } from 'next/server'
 import {prisma} from "@/db/db";
-import {NextRequest} from "next/server";
 
 export async function GET(req: NextRequest) {
 
