@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Avatar, Dropdown, Navbar } from 'flowbite-react';
 
 const Navigationbar = () => {
+
+  const [dropdownItems, setDropdownItems] = useState<string[]>([]);
+
+  const addDropdownItem = () => {
+    const newItem = "Balloon " + (dropdownItems.length + 1);
+    setDropdownItems(prevItems => [...prevItems, newItem]);
+  };
+  
+  const openBalloonInterface = (balloonName: String) => {
+    console.log(`Öffne Balloon-Interface für ${balloonName}`);
+  };
+
+  const deleteBalloonInterface = (balloonName: String) => {
+    console.log(`Lösche Balloon-Interface für ${balloonName}`);
+  };
+
     return (
         <Navbar fluid rounded>
           <Navbar.Brand href="http://localhost:3000/">
@@ -15,10 +31,18 @@ const Navigationbar = () => {
               inline
               label={"Ballons"}
             >
-              <Dropdown.Item>Ballon 1</Dropdown.Item>
-              <Dropdown.Item>Ballon 2</Dropdown.Item>
+            <ul>
+              {dropdownItems.map((item, index) => (
+                <li key={index}>
+                  <Dropdown.Item>
+                    <button className="ml-1" onClick={() => openBalloonInterface(item)}>{item}</button>
+                    <button className="ml-3" onClick={() => deleteBalloonInterface(item)}>X</button>
+                  </Dropdown.Item>
+                </li>
+              ))}
+            </ul>
               <Dropdown.Divider />
-              <Dropdown.Item>Add Ballon</Dropdown.Item>
+              <Dropdown.Item><button onClick={addDropdownItem}>Add Ballon</button></Dropdown.Item>
             </Dropdown>
             <Navbar.Toggle />
           </div>
