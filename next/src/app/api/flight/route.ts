@@ -1,6 +1,7 @@
 import { type NextRequest } from 'next/server'
 import {prisma} from "@/db/db";
 
+
 export async function GET(req: NextRequest) {
 
     try {
@@ -19,7 +20,7 @@ export async function GET(req: NextRequest) {
         return Response.json(data);
     } catch (error) {
         console.error('Fehler bei der Verarbeitung der POST-Anfrage:', error);
-        return new Response( 'Fehler bei der Verarbeitung der Anfrage', {status : 500});
+        return Response.json({error:'Fehler bei der Verarbeitung der Anfrage'}, {status : 500});
     }
 }
 
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
                 }
             })
 
-            return Response
+            return Response.json({}, {status: 204})
         } else {
             const flight = await prisma.flight.create({
                 data: {
@@ -51,12 +52,12 @@ export async function POST(req: NextRequest) {
                     begin: new Date(String(body.begin)),
                 }
             });
-            return Response.json({id: flight.id})
+            return Response.json({id: flight.id}, {status: 200})
         }
 
 
     } catch (error) {
         console.error('Fehler bei der Verarbeitung der POST-Anfrage:', error);
-        return new Response( 'Fehler bei der Verarbeitung der Anfrage', {status : 500});
+        return Response.json({error:'Fehler bei der Verarbeitung der Anfrage'}, {status : 500});
     }
 }

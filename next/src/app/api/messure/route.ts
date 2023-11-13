@@ -26,7 +26,6 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-
         const body = await req.json();
         // Get ballon
         const balloonKey : String = JSON.parse(body.ballonId)
@@ -37,7 +36,7 @@ export async function POST(req: NextRequest) {
         })
 
         if(balloon === null){
-            return new Response( 'Balloon not found', {status : 204});
+            return Response.json({error:'Balloon not found'}, {status : 404});
         }
 
         const flight = await prisma.flight.findFirst(
@@ -51,7 +50,7 @@ export async function POST(req: NextRequest) {
         )
 
         if(flight === null){
-            return new Response( 'Flight not found', {status : 204});
+            return Response.json({error:'Balloon not found'}, {status : 404});
         }
 
         if ('gpsdata' in body) {
@@ -113,9 +112,9 @@ export async function POST(req: NextRequest) {
                     value : temperature.value
                 }})
         }
-        return Response
+        return Response.json({}, {status : 204});
     } catch (error) {
         console.error('Fehler bei der Verarbeitung der POST-Anfrage:', error);
-        return new Response( 'Balloon not found', {status : 204});
+        return Response.json({error:'Balloon not found'}, {status : 404});
     }
 }
