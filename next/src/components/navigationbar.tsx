@@ -11,13 +11,14 @@ const Navigationbar = () => {
     setDropdownItems(prevItems => [...prevItems, newItem]);
   };
   
-  const openBalloonInterface = (balloonName: String) => {
-    console.log(`Öffne Balloon-Interface für ${balloonName}`);
+  const openBalloonInterface = (balloon: String) => {
+    console.log(`Öffne Balloon-Interface für ${balloon}`);
   };
 
-  const deleteBalloonInterface = (balloonName: String) => {
-    console.log(`Lösche Balloon-Interface für ${balloonName}`);
-  };
+  const removeBalloonInterface = (balloon: String) => {
+    const updatedItems = dropdownItems.filter(item => item !== balloon);
+    setDropdownItems(updatedItems);
+  }
 
     return (
         <Navbar fluid rounded>
@@ -36,7 +37,7 @@ const Navigationbar = () => {
                 <li key={index}>
                   <Dropdown.Item>
                     <button className="ml-1" onClick={() => openBalloonInterface(item)}>{item}</button>
-                    <button className="ml-3" onClick={() => deleteBalloonInterface(item)}>X</button>
+                    <button className="ml-3" onClick={() => removeBalloonInterface(item)}>X</button>
                   </Dropdown.Item>
                 </li>
               ))}
