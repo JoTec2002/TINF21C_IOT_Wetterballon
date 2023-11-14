@@ -18,13 +18,13 @@ class Camera:
         # And wait for those settings to take effect
         time.sleep(1)
 
-        save_img_thread = Thread(target=self.save_image())
+        save_img_thread = Thread(target=self.save_image)
         save_img_thread.start()
 
     def save_image(self):
         while True:
             r = self.picam2.capture_request()
-            r.save("main", f"images/image{self.count}.jpg")
+            r.save("main", f"image{self.count}.jpg")
             r.release()
             self.count += 1
 
