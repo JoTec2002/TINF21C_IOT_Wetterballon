@@ -9,7 +9,9 @@ import time
 
 import smbus2
 from loguru import logger
+
 from BME280.Mbme280 import Mbme280
+from Camera.camera import Camera
 from Communication.communication import Communication
 from GPS.gps import Gps
 from MPU9050.mpu9050 import MPU9050
@@ -32,6 +34,10 @@ class Main:
         self.MPU9050 = MPU9050()
         logger.info("MPU9050 init successful")
 
+        #Camera
+        self.camera = Camera()
+        logger.info("Camera init successful")
+
         Communication(bus)
 
     def loop(self):
@@ -39,6 +45,7 @@ class Main:
             logger.info(self.GPS.read_location())
             logger.info(self.BME280.read_temp_pressure_humidity())
             logger.info(self.MPU9050.read_position_data())
+            self.camera.get_image()
             time.sleep(20)
 
 if __name__ == "__main__":
