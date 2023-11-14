@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Form as HouseForm, Field } from "houseform";
 import { Avatar, Dropdown, Navbar } from 'flowbite-react';
+import { Balloon } from './balloon'
 
 const Navigationbar = () => {
 
-  const [dropdownItems, setDropdownItems] = useState<string[]>([]);
+  const { generateApiKey } = require('generate-api-key');
+
+  const [dropdownItems, setDropdownItems] = useState<Balloon[]>([]);
   const [addingBalloon, setAddingBalloon] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -14,16 +17,19 @@ const Navigationbar = () => {
 
   const addBalloon = (data: any) => {
     if (data.balloonname.trim() !== '') {
-      setDropdownItems(prevItems => [...prevItems, data.balloonname]);
+      var newBalloon = new Balloon(data.balloonname, generateApiKey());
+      setDropdownItems(prevItems => [...prevItems, newBalloon]);
     }
     setAddingBalloon(false);
   };
 
-  const openBalloonInterface = (balloon: String) => {
-    console.log(`Öffne Balloon-Interface für ${balloon}`);
+  const openBalloonInterface = (balloon: Balloon) => {
+    //need to wait for map to be finished
+    console.log(`Öffne Balloon-Interface für ${balloon.name}`);
   };
 
-  const removeBalloonInterface = (balloon: String) => {
+  const removeBalloonInterface = (balloon: Balloon) => {
+    //this has to be adapted to not only delete the balloon from the interface, but also to delete it from the database
     const updatedItems = dropdownItems.filter(item => item !== balloon);
     setDropdownItems(updatedItems);
   }
@@ -47,7 +53,7 @@ const Navigationbar = () => {
           <div className="menu">
             {dropdownItems.map((item, index) => (
               <div key={index} className="menu-item">
-                <button className="ml-3" onClick={() => openBalloonInterface(item)} >{item}</button>
+                <button className="ml-3" onClick={() => openBalloonInterface(item)}>{item.name}</button>
                 <div>
                   <button className="ml-3" onClick={() => removeBalloonInterface(item)}>X</button>
                 </div>
