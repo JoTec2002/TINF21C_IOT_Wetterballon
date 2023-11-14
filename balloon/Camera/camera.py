@@ -14,7 +14,7 @@ class Camera:
 
         # Give time for Aec and Awb to settle, before disabling them
         time.sleep(1)
-        self.picam2.set_controls({"AeEnable": False, "AwbEnable": False, "FrameRate": 1.0})
+        self.picam2.set_controls({"AeEnable": False, "AwbEnable": False, "FrameRate": 0.5})
         # And wait for those settings to take effect
         time.sleep(1)
 
@@ -24,7 +24,7 @@ class Camera:
     def save_image(self):
         while True:
             r = self.picam2.capture_request()
-            r.save("main", f"image{self.count}.jpg")
+            r.save("main", f"Camera/images/image{self.count}.jpg")
             r.release()
             self.count += 1
 
