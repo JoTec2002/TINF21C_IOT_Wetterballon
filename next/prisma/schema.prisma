@@ -2,9 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "mysql"
+  url      = env("MYSQL_URL")
 }
 
 generator client {
@@ -20,7 +19,6 @@ model Ballon {
 
 model Flight {
   id    Int       @id @default(autoincrement())
-  name  String?
   begin DateTime?
   end   DateTime?
 
@@ -33,11 +31,13 @@ model Flight {
   temperatureIndoor  temperatureIndoor[]
   temperatureOutdoor temperatureOutdoor[]
   airpressure        airpressure[]
+  image              image[]
 }
 
 model gpsdata {
-  id   Int      @id @default(autoincrement())
-  time DateTime
+  id     Int      @id @default(autoincrement())
+  time   DateTime
+  source String
 
   satellites Int
   speed      Float
@@ -51,8 +51,9 @@ model gpsdata {
 }
 
 model humidityIndoor {
-  id   Int      @id @default(autoincrement())
-  time DateTime
+  id     Int      @id @default(autoincrement())
+  time   DateTime
+  source String
 
   value Float
 
@@ -61,8 +62,9 @@ model humidityIndoor {
 }
 
 model humidityOutdoor {
-  id   Int      @id @default(autoincrement())
-  time DateTime
+  id     Int      @id @default(autoincrement())
+  time   DateTime
+  source String
 
   value Float
 
@@ -71,8 +73,9 @@ model humidityOutdoor {
 }
 
 model temperatureIndoor {
-  id   Int      @id @default(autoincrement())
-  time DateTime
+  id     Int      @id @default(autoincrement())
+  time   DateTime
+  source String
 
   value Float
 
@@ -81,8 +84,9 @@ model temperatureIndoor {
 }
 
 model temperatureOutdoor {
-  id   Int      @id @default(autoincrement())
-  time DateTime
+  id     Int      @id @default(autoincrement())
+  time   DateTime
+  source String
 
   value Float
 
@@ -91,10 +95,22 @@ model temperatureOutdoor {
 }
 
 model airpressure {
-  id   Int      @id @default(autoincrement())
-  time DateTime
+  id     Int      @id @default(autoincrement())
+  time   DateTime
+  source String
 
   value Int
+
+  flightId Int
+  flight   Flight @relation(fields: [flightId], references: [id])
+}
+
+model image {
+  id     Int      @id @default(autoincrement())
+  time   DateTime
+  source String
+
+  base64Image String @db.LongText
 
   flightId Int
   flight   Flight @relation(fields: [flightId], references: [id])

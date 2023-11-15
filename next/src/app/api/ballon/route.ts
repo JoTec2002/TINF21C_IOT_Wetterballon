@@ -6,7 +6,8 @@ export async function GET() {
         const data = await prisma.ballon.findMany({
             select : {
                 id : true,
-                name : true
+                name : true,
+                apikey : false
             }
         })
         return Response.json(data)
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
         console.error('Fehler bei der Verarbeitung der POST-Anfrage:', error);
         return new Response( 'Fehler bei der Verarbeitung der Anfrage', {status : 500});
     }
-    return Response.json({ message : "aei" })
+    //return Response.json({ message : "aei" })
 }
 
 function generateRandomString(stringLength: number) {
