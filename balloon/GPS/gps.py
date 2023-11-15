@@ -138,6 +138,6 @@ class Gps:
         if not location_array[2] == '0.000000':
             ret_array["latitude"] = (parse_gps_to_decimal(location_array[2]))
 
-        ret_array["utc_time"] = parese_date_from_string_to_datetime(location_array[4])
+        ret_array["utc_time"] = ((parese_date_from_string_to_datetime(location_array[4])).isoformat())
 
         return ret_array

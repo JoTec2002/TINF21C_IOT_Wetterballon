@@ -1,8 +1,9 @@
 import requests
 from requests import HTTPError
 
-__BASE_URL__ = "https://nas.graubner-bayern.de"
+__BASE_URL__ = "https://tinf-21-c-iot-wetterballon.vercel.app/"
 __APP_URL__ = "/api/messure"
+__API_KEY__ = "nDnLEC3Ybkg2oPIFuyeV"
 
 class DirectConnection:
     def __init__(self):
