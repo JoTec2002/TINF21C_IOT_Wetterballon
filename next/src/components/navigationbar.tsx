@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import { Form as HouseForm, Field } from "houseform";
-import { Avatar, Dropdown, Navbar } from 'flowbite-react';
+import { Dropdown, Navbar } from 'flowbite-react';
 import { Balloon } from './balloon'
 
 const Navigationbar = () => {
-
-  const { generateApiKey } = require('generate-api-key');
-
   const [dropdownItems, setDropdownItems] = useState<Balloon[]>([]);
   const [addingBalloon, setAddingBalloon] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -16,8 +13,12 @@ const Navigationbar = () => {
   };
 
   const addBalloon = (data: any) => {
+    //id and apiKey need to be pulled from database
+    const id = 0;
+    const apiKey = 0;
+
     if (data.balloonname.trim() !== '') {
-      var newBalloon = new Balloon(data.balloonname, generateApiKey());
+      var newBalloon = new Balloon(data.balloonname, id, apiKey);
       setDropdownItems(prevItems => [...prevItems, newBalloon]);
     }
     setAddingBalloon(false);
