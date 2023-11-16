@@ -1,5 +1,6 @@
 export type Gpsdata  = {
     time:Date
+    source:String
     satellites:number
     speed:number
     course: number
