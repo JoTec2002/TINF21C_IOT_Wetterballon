@@ -1,6 +1,4 @@
 import {prisma} from "@/db/db";
-import {Gpsdata} from "@/types/gpsdata";
-import {ValueObj} from "@/types/valueObj";
 import {Messure} from "@/types/messure";
 import {NextRequest} from "next/server";
 
@@ -15,6 +13,7 @@ export async function GET(req: NextRequest) {
             temperature_outdoor : await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}}),
             humidity_indoor : await prisma.humidityIndoor.findMany({where : { flightId : flightid}}),
             humidity_outdoor : await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}}),
+            image : await prisma.image.findMany({where: {flightId : flightid}, select : {id: true, time : true, source : true}})
         }
         return Response.json(data)
     } catch (error) {
@@ -26,18 +25,23 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-
         const body = await req.json();
-        // Get ballon
-        const balloonKey : String = JSON.parse(body.ballonId)
+        // Get balloon
+        const balloonApiKey = String(req.headers.get("apikey"))
+
+        if(balloonApiKey === null){
+            return Response.json({error:'Apikey in header not found'}, {status : 404});
+        }
+
+
         const balloon    = await prisma.ballon.findFirst({
             where : {
-                apikey : String(balloonKey)
+                apikey : balloonApiKey
             },
         })
 
         if(balloon === null){
-            return new Response( 'Balloon not found', {status : 204});
+            return Response.json({error:'No ballon for apikey found'}, {status : 404});
         }
 
         const flight = await prisma.flight.findFirst(
@@ -51,71 +55,81 @@ export async function POST(req: NextRequest) {
         )
 
         if(flight === null){
-            return new Response( 'Flight not found', {status : 204});
+            return Response.json({error:'Not flight found'}, {status : 404});
         }
 
-        if ('gpsdata' in body) {
-            const gpsdata : Gpsdata =  body.gpsdata.json();
+        if (body.gpsdata !== undefined) {
             await prisma.gpsdata.create({data: {
-                    flightId : flight.id,
-                    time : gpsdata.time,
-                    satellites : gpsdata.satellites,
-                    speed : gpsdata.speed,
-                    course : gpsdata.course,
-                    altitude : gpsdata.altitude,
-                    longitude : gpsdata.longitude,
-                    latitude: gpsdata.latitude
+                    flightId : flight!.id,
+                    time : new Date(String(body.gpsdata.time)),
+                    source : 'api',
+                    satellites : parseInt(String(body.gpsdata.satellites)),
+                    speed : parseFloat(String(body.gpsdata.speed)),
+                    course : parseFloat(String(body.gpsdata.course)),
+                    altitude : parseFloat(String(body.gpsdata.altitude)),
+                    longitude : parseFloat(String(body.gpsdata.longitude)),
+                    latitude: parseFloat(String(body.gpsdata.latitude))
                 }
             })
         }
 
-        if ('airpressure' in body) {
-            const airpressure : ValueObj = body.airpressure.json();
+        if (body.airpressure !== undefined) {
             await prisma.airpressure.create({data: {
-                    flightId : flight.id,
-                    time : airpressure.time,
-                    value : airpressure.value
+                    flightId : flight!.id,
+                    time : new Date(String(body.airpressure.time)),
+                    source : 'api',
+                    value : parseInt(String(body.airpressure.value))
                 }})
         }
 
-        if ('humidity_indoor' in body) {
-            const humbidity: ValueObj = body.humidity_indoor.json();
+        if (body.humidity_indoor !== undefined) {
             await prisma.humidityIndoor.create({data: {
-                    flightId : flight.id,
-                    time : humbidity.time,
-                    value : humbidity.value
+                    flightId : flight!.id,
+                    time : new Date(String(body.humidity_indoor.time)),
+                    source : 'api',
+                    value : parseFloat(String(body.humidity_indoor.value))
                 }})
         }
 
-        if ('humidity_outdoor' in body) {
-            const humbidity: ValueObj = body.humidity_outdoor.json();
+       if (body.humidity_outdoor !== undefined) {
             await prisma.humidityOutdoor.create({data: {
-                    flightId : flight.id,
-                    time : humbidity.time,
-                    value : humbidity.value
+                    flightId : flight!.id,
+                    time : new Date(String(body.humidity_outdoor.time)),
+                    source : 'api',
+                    value : parseFloat(String(body.humidity_outdoor.value))
                 }})
         }
 
-        if ('temperature_indoor' in body) {
-            const temperature: ValueObj = body.temperature_indoor.json();
+        if (body.temperature_indoor !== undefined) {
             await prisma.temperatureIndoor.create({data: {
-                    flightId : flight.id,
-                    time : temperature.time,
-                    value : temperature.value
+                    flightId : flight!.id,
+                    time : new Date(String(body.temperature_indoor.time)),
+                    source : 'api',
+                    value : parseFloat(String(body.temperature_indoor.value))
                 }})
         }
 
-        if ('temperature_outdoor' in body) {
-            const temperature: ValueObj = body.temperature_outdoor.json();
+        if (body.temperature_outdoor !== undefined) {
             await prisma.temperatureOutdoor.create({data: {
-                    flightId : flight.id,
-                    time : temperature.time,
-                    value : temperature.value
+                    flightId : flight!.id,
+                    time : new Date(String(body.temperature_outdoor.time)),
+                    source : 'api',
+                    value : parseFloat(String(body.temperature_outdoor.value))
                 }})
         }
-        return Response
+
+        if(body.image !== undefined){
+            await prisma.image.create({data: {
+                    flightId : flight!.id,
+                    source : 'api',
+                    time : new Date(String(body.image.time)),
+                    base64Image : String(body.image.base64Image)
+                }})
+        }
+
+        return Response.json({}, {status : 200});
     } catch (error) {
         console.error('Fehler bei der Verarbeitung der POST-Anfrage:', error);
-        return new Response( 'Balloon not found', {status : 204});
+        return Response.json({error:'Fehler bei der Verarbeitung der POST-Anfrage:'}, {status : 404});
     }
 }

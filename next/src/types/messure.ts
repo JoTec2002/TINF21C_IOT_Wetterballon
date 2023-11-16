@@ -1,5 +1,6 @@
 import {Gpsdata} from "@/types/gpsdata";
 import {ValueObj} from "@/types/valueObj";
+import {ImageObj} from "@/types/image";
 
 export type Messure = {
     airpressure: ValueObj[],
@@ -8,4 +9,5 @@ export type Messure = {
     humidity_outdoor: ValueObj[],
     temperature_indoor: ValueObj[],
     temperature_outdoor: ValueObj[],
+    image : ImageObj[],
 }

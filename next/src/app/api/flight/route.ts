@@ -1,11 +1,12 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { type NextRequest } from 'next/server'
 import {prisma} from "@/db/db";
-import {NextRequest} from "next/server";
+import {headers} from "next/headers";
+
 
 export async function GET(req: NextRequest) {
 
     try {
-        const ballonId = parseInt(String(req.headers.get("apikey")));
+        const ballonId = parseInt(String(req.headers.get("id")));
 
         const data = await prisma.flight.findMany({
             where : {
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
         return Response.json(data);
     } catch (error) {
         console.error('Fehler bei der Verarbeitung der POST-Anfrage:', error);
-        return new Response( 'Fehler bei der Verarbeitung der Anfrage', {status : 500});
+        return Response.json({error:'Fehler bei der Verarbeitung der Anfrage'}, {status : 500});
     }
 }
 
@@ -28,36 +29,46 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        const body = await req.json();
+       // const body = await req.json()
 
-        const balloonId = parseInt(String(body.apikey));
+        if (req.headers.get('flightId') !== null) {
+            const flightId: number = parseInt(String(req.headers.get('flightId')));
 
-        if ('flightId' in body) {
-            const flightId: number = JSON.parse(body.flightId);
-
-            prisma.flight.update({
+            const flight = await prisma.flight.update({
                 where: {
                     id: flightId
                 },
                 data: {
-                    end: new Date(String(body.end))
+                    end: new Date()
                 }
             })
 
-            return Response
+            return Response.json({'message': 'Flight closed', 'flight': flight}, {status: 200})
         } else {
+            const balloonId = parseInt(String(req.headers.get('balloonId')));
+
+            const flights = await prisma.flight.updateMany({
+                where: {
+                    ballonId: balloonId,
+                    end : null
+                },
+                data : {
+                    end: new Date()
+                }
+            })
+
             const flight = await prisma.flight.create({
                 data: {
                     ballonId: balloonId,
-                    begin: new Date(String(body.begin)),
+                    begin:  new Date(),
                 }
             });
-            return Response.json({id: flight.id})
+            return Response.json({id: flight.id}, {status: 200})
         }
 
 
     } catch (error) {
         console.error('Fehler bei der Verarbeitung der POST-Anfrage:', error);
-        return new Response( 'Fehler bei der Verarbeitung der Anfrage', {status : 500});
+        return Response.json({error:'Fehler bei der Verarbeitung der Anfrage'}, {status : 500});
     }
 }
