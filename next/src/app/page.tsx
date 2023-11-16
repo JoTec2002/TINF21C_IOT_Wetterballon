@@ -1,10 +1,11 @@
 'use client'
 import Link from 'next/link';
-import {Button, Navbar} from 'flowbite-react';
+import {Button} from 'flowbite-react';
+import Navigationbar from '@/components/navigationbar';
 
 const MainPage = () => {
   return (
-      <><Navbar></Navbar></>
+      <><Navigationbar></Navigationbar></>
   )
 }
 

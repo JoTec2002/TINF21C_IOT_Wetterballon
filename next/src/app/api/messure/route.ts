@@ -1,6 +1,4 @@
 import {prisma} from "@/db/db";
-import {Gpsdata} from "@/types/gpsdata";
-import {ValueObj} from "@/types/valueObj";
 import {Messure} from "@/types/messure";
 import {NextRequest} from "next/server";
 
@@ -15,7 +13,7 @@ export async function GET(req: NextRequest) {
             temperature_outdoor : await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}}),
             humidity_indoor : await prisma.humidityIndoor.findMany({where : { flightId : flightid}}),
             humidity_outdoor : await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}}),
-            image : await prisma.image.findMany({where: {flightId : flightid}, select : {id: true, time : true}})
+            image : await prisma.image.findMany({where: {flightId : flightid}, select : {id: true, time : true, source : true}})
         }
         return Response.json(data)
     } catch (error) {
