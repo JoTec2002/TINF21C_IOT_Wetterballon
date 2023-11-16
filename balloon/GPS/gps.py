@@ -127,17 +127,21 @@ class Gps:
             return False
 
         ret_array["tiff"] =             location_array[5]
-        ret_array["num_satellites"] =    location_array[6]
+        ret_array["satellites"] =    location_array[6]
         ret_array["speed"] =            location_array[7]
         ret_array["course"] =           location_array[8]
         ret_array["altitude"] =         float(location_array[3])
 
         if not location_array[1] == '0.000000':
             ret_array["longitude"] = (parse_gps_to_decimal(location_array[1]))
+        else:
+            ret_array["longitude"] = float(location_array[1])
 
         if not location_array[2] == '0.000000':
             ret_array["latitude"] = (parse_gps_to_decimal(location_array[2]))
+        else:
+            ret_array["latitude"] = float(location_array[2])
 
-        ret_array["utc_time"] = ((parese_date_from_string_to_datetime(location_array[4])).isoformat())
+        ret_array["time"] = ((parese_date_from_string_to_datetime(location_array[4])).isoformat())
 
         return ret_array

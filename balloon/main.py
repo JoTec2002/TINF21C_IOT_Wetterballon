@@ -6,6 +6,7 @@ date: 19.10.2023
 license: MIT
 """
 import time
+from threading import Thread
 
 import smbus2
 from loguru import logger
@@ -38,15 +39,29 @@ class Main:
         self.camera = Camera()
         logger.info("Camera init successful")
 
-        Communication(bus)
+        self.Communication = Communication(bus)
 
     def loop(self):
         while True:
-            logger.info(self.GPS.read_location())
-            logger.info(self.BME280.read_temp_pressure_humidity())
+            time_start = time.time_ns()
+            # get all sensor values
+            gps_data = self.GPS.read_location()
+            temp_pressure_humidity_outdoor_data = self.BME280.read_temp_pressure_humidity()
+            logger.info(gps_data)
+            logger.info(temp_pressure_humidity_outdoor_data)
             logger.info(self.MPU9050.read_position_data())
-            self.camera.get_image()
-            time.sleep(20)
+            #self.camera.get_image()
+
+            Thread(target=self.Communication.send_gps_data, args=(gps_data,)).start()
+            Thread(target=self.Communication.send_temp_pressure_humidity_outdoor_data,
+                   args=(temp_pressure_humidity_outdoor_data,)).start()
+
+            #sleep so that sensor values are read every 30 seconds
+            time_run = (time.time_ns() - time_start) / 1_000_000_000
+            time_to_sleep = 20-time_run
+            print(time_to_sleep)
+            if time_to_sleep > 0:
+                time.sleep(time_to_sleep)
 
 if __name__ == "__main__":
     print("Start")
