@@ -1,3 +1,5 @@
+@import url("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,4 +19,12 @@
 }
 
 body {
+
+}
+
+#map {
+  height: 500px;
+  width: 80%;
+  margin-left: 10%;
+
 }
