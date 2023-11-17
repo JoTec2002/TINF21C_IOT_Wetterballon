@@ -1,13 +1,14 @@
 import json
 
 from loguru import logger
+from smbus2 import SMBus
 
 from Communication.DirectConnection import DirectConnection
 from Communication.LoRaConnection import LoRaConnection
 
 
 class Communication:
-    def __init__(self, bus):
+    def __init__(self, bus: SMBus):
         # Define Communication stati
         self.directConnection = DirectConnection()
         self.loraConnection = LoRaConnection(bus)
@@ -33,6 +34,8 @@ class Communication:
 
         if self.directConnection.status:
            logger.info(self.directConnection.send_gps_data(gps_data_json))
+
+        self.loraConnection.send_gps_data_minified(gps_data)
         pass
 
     def send_temp_pressure_humidity_outdoor_data(self, temp_pressure_humidity_data):
