@@ -1,12 +1,16 @@
 'use client'
-import Link from 'next/link';
-import {Button} from 'flowbite-react';
 import Navigationbar from '@/components/navigationbar';
+import Main from "@/components/menu/main";
+import {GlobalProvider} from "@/components/globalProvider";
+
 
 const MainPage = () => {
-  return (
-      <><Navigationbar></Navigationbar></>
-  )
+    return (
+        <GlobalProvider>
+            <Navigationbar/>
+            <Main />
+        </GlobalProvider>
+    )
 }
 
 export default MainPage;

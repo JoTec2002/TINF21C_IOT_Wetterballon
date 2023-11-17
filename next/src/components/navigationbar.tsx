@@ -1,58 +1,33 @@
+'use client'
 import React, { useState } from "react";
-import { Form as HouseForm, Field } from "houseform";
-import { Dropdown, Navbar } from 'flowbite-react';
-import { Balloon } from './balloon'
+import { Navbar } from 'flowbite-react';
+import BalloonDropDown from "@/components/dropdowns/balloonDropDown";
+import FlightDropDown from "@/components/dropdowns/flightDropDown";
+import Image from "next/image";
 
-const Navigationbar = () => {
-  const [dropdownItems, setDropdownItems] = useState<Balloon[]>([]);
-  const [addingBalloon, setAddingBalloon] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const setAddingBalloonTrue = () => {
-    setAddingBalloon(true);
-  };
-
-  const addBalloon = (data: any) => {
-    //id and apiKey need to be pulled from database
-    const id = 0;
-    const apiKey = 0;
-
-    if (data.balloonname.trim() !== '') {
-      var newBalloon = new Balloon(data.balloonname, id, apiKey);
-      setDropdownItems(prevItems => [...prevItems, newBalloon]);
-    }
-    setAddingBalloon(false);
-  };
-
-  const openBalloonInterface = (balloon: Balloon) => {
-    //need to wait for map to be finished
-    console.log(`Öffne Balloon-Interface für ${balloon.name}`);
-  };
-
-  const removeBalloonInterface = (balloon: Balloon) => {
-    //this has to be adapted to not only delete the balloon from the interface, but also to delete it from the database
-    const updatedItems = dropdownItems.filter(item => item !== balloon);
-    setDropdownItems(updatedItems);
-  }
-
-  const handleDropdownOpen = () => {
-    if (dropdownOpen) {
-      setAddingBalloon(false);
-    }
-    setDropdownOpen(!dropdownOpen);
-  };
+const NavigationBar = () => {
 
   return (
-    <Navbar fluid rounded>
+      <Navbar fluid rounded>
+          <Navbar.Brand>
+              <Image src="/favicon.ico" width={30} height={30} alt="Wetterballon"/>
+              <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">IoT Wetterballon</span>
+          </Navbar.Brand>
+          <Navbar.Collapse className="mr-10">
+              <BalloonDropDown />
+              <FlightDropDown />
+          </Navbar.Collapse>
+      </Navbar>
+    /* <Navbar fluid rounded>
       <Navbar.Brand href="http://localhost:3000/">
-        <img src="/favicon.ico" className="mr-3 h-6 sm:h-9" alt="Balloon Logo" />
-        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">IoT Wetterballon</span>
+
       </Navbar.Brand>
       <div className="dropdown">
         <button onClick={handleDropdownOpen}>Balloons</button>
         {dropdownOpen ?
           <div className="menu">
-            {dropdownItems.map((item, index) => (
+           {/*dropdownItems.map((item, index) => (
               <div key={index} className="menu-item">
                 <button className="ml-3" onClick={() => openBalloonInterface(item)}>{item.name}</button>
                 <div>
@@ -62,34 +37,35 @@ const Navigationbar = () => {
             ))}
             <Dropdown.Divider />
             <div className="menu-item">
-              {addingBalloon ? (
-                <HouseForm onSubmit={addBalloon}>
-                  {({ submit }) => (
-                    <form onSubmit={(e) => { e.preventDefault(); submit() }}>
-                      <Field name="balloonname" initialValue={""}>
-                        {({ value, setValue, onBlur }) => (
-                          <input
-                            value={value}
-                            onChange={(e) => setValue(e.currentTarget.value)}
-                            onBlur={onBlur}
-                            placeholder="name"
-                          />
-                        )}
-                      </Field>
-                      <button type="submit">+</button>
-                    </form>
-                  )}
-                </HouseForm>
-              ) : (
-                <button onClick={setAddingBalloonTrue}>Add Ballon</button>
-              )}
+              {/*addingBalloon ? (
+
+              <HouseForm onSubmit={addBalloon}>
+                 {({ submit }) => (
+                   <form onSubmit={(e) => { e.preventDefault(); submit() }}>
+                     <Field name="balloonname" initialValue={""}>
+                       {({ value, setValue, onBlur }) => (
+                         <input
+                           value={value}
+                           onChange={(e) => setValue(e.currentTarget.value)}
+                           onBlur={onBlur}
+                           placeholder="name"
+                         />
+                       )}
+                     </Field>
+                     <button type="submit">+</button>
+                   </form>
+                 )}
+               </HouseForm>
+             ) : (
+               <button onClick={setAddingBalloonTrue}>Add Ballon</button>
+             )}
             </div>
           </div> : null}
         <Navbar.Toggle />
       </div>
-    </Navbar >
+    </Navbar >*/
 
   );
 }
 
-export default Navigationbar;
+export default NavigationBar;
