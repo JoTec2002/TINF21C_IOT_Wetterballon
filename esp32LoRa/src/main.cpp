@@ -73,15 +73,81 @@ static void prepareTxFrame( uint8_t port )
 
 RTC_DATA_ATTR bool firstrun = true;
 
-void onIicRecive(){
-    //TODO: Set appData[] to the Data I Wanna send
-    appDataSize = 4;
-    appData[0] = 0x00;
-    appData[1] = 0x01;
-    appData[2] = 0x02;
-    appData[3] = 0x03;
+float parseValues(const byte data[]){
+    union float_tag{
+        byte b[4];
+        float fval;
+    }ft{};
 
-    Serial.println(Wire.read());
+    ft.b[0] =data[0];
+    ft.b[1] = data[1];
+    ft.b[2] = data[2];
+    ft.b[3] = data[3];
+
+    //Serial.print("value: ");
+    //Serial.println(ft.fval);
+    return ft.fval;
+}
+
+//Sensor Values
+float longitude = 0;
+float latitude = 0;
+float altitude = 0;
+
+int cmd = 0;
+void onIicRecive(int iicCount){
+    /*  I2C Address Map
+     *  0x1.    Range for Data Request
+     *  0x2.    Range for Recieve Data
+     *  0x3.    Commands
+     *
+     *  0x21    GPS Data Longitude
+     *  0x22    GPS Data Latitude
+     *  0x23    Altitude
+     *
+     *  0x31    Send GPS Data
+     */
+    Serial.print("iicCount: ");
+    Serial.println(iicCount);
+
+    cmd = Wire1.read();
+    Serial.print("CMD: ");
+    Serial.println(cmd);
+
+
+    float data_value = 0;
+    if(iicCount == 5){
+        byte temp[4] = "";
+        for (int i = 0; i < 4; i++) {
+            temp[i] = Wire1.read();
+        }
+        data_value = parseValues(temp);
+    }
+
+    if (cmd == 0x21){
+        longitude = data_value;
+    } else if(cmd == 0x22){
+        latitude = data_value;
+    } else if(cmd == 0x23){
+        altitude = data_value;
+    }
+
+    if (cmd == 0x31){
+        Serial.print("Saved Data: ");
+        Serial.print(longitude);
+        Serial.print(" ");
+        Serial.print(latitude);
+        Serial.print(" ");
+        Serial.println(altitude);
+        Serial.println("Send GPS Data");
+    }
+
+
+
+
+}
+void onIicRequest(){
+    Serial.println("IIC Request");
 }
 
 void setup() {
@@ -100,6 +166,8 @@ void setup() {
     /*custom further Setup here*/
     //IIC inity
     Wire1.begin(0x8, 21, 22, 100000);
+    Wire1.onReceive(onIicRecive);
+    Wire1.onRequest(onIicRequest);
 }
 
 void loop()
@@ -151,6 +219,5 @@ void loop()
             deviceState = DEVICE_STATE_INIT;
             break;
         }
-        //TODO: Implement here I2C Loop
     }
 }
