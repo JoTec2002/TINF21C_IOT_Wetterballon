@@ -20,9 +20,9 @@ def float_to_bytes(val: float):
 class LoRaConnection:
     def __init__(self, bus: SMBus):
         self.bus = bus
-        self.write_string_data(0x00, "Hello")
-        read = bus.read_word_data(__ESP_Address__, 0x01)
-        print(read)
+        #self.write_string_data(0x00, "Hello")
+        #read = bus.read_word_data(__ESP_Address__, 0x01)
+        #print(read)
 
         self.status = True
         pass
@@ -35,15 +35,13 @@ class LoRaConnection:
         return 0
 
     def write_float_data(self, register: int, value: float):
-        byte_value = float_to_bytes(value)
+        value = int(value*10000)
+        #byte_value = float_to_bytes(value)
+        byte_value = value.to_bytes(3, 'big')
         self.bus.write_i2c_block_data(__ESP_Address__, register, byte_value)
         return 0
 
     def send_gps_data_minified(self, gps_data):
-        gps_data_minified = {"lo": gps_data["longitude"],
-                             "la": gps_data["latitude"],
-                             "a": gps_data["altitude"]}
-
         self.write_float_data(0x21, gps_data['longitude'])
         self.write_float_data(0x22, gps_data['latitude'])
         self.write_float_data(0x23, gps_data['altitude'])
