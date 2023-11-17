@@ -73,26 +73,18 @@ static void prepareTxFrame( uint8_t port )
 
 RTC_DATA_ATTR bool firstrun = true;
 
-float parseValues(const byte data[]){
-    union float_tag{
-        byte b[4];
-        float fval;
-    }ft{};
-
-    ft.b[0] =data[0];
-    ft.b[1] = data[1];
-    ft.b[2] = data[2];
-    ft.b[3] = data[3];
+int parseValue(const byte data[]){
+    int val = data[2] + (data[1] << 8) + (data[0] << 16);
 
     //Serial.print("value: ");
-    //Serial.println(ft.fval);
-    return ft.fval;
+    //Serial.println(val);
+    return val;
 }
 
 //Sensor Values
-float longitude = 0;
-float latitude = 0;
-float altitude = 0;
+byte longitude[3];
+byte latitude[3];
+byte altitude[3];
 
 int cmd = 0;
 void onIicRecive(int iicCount){
@@ -107,39 +99,61 @@ void onIicRecive(int iicCount){
      *
      *  0x31    Send GPS Data
      */
-    Serial.print("iicCount: ");
-    Serial.println(iicCount);
+    //Serial.print("iicCount: ");
+    //Serial.println(iicCount);
 
     cmd = Wire1.read();
     Serial.print("CMD: ");
     Serial.println(cmd);
 
-
-    float data_value = 0;
-    if(iicCount == 5){
-        byte temp[4] = "";
-        for (int i = 0; i < 4; i++) {
-            temp[i] = Wire1.read();
+    byte data_bytes[3] = "";
+    if(iicCount == 4){
+        for (int i = 0; i < 3; i++) {
+            data_bytes[i] = Wire1.read();
         }
-        data_value = parseValues(temp);
     }
 
     if (cmd == 0x21){
-        longitude = data_value;
+        longitude[0] = data_bytes[0];
+        longitude[1] = data_bytes[1];
+        longitude[2] = data_bytes[2];
     } else if(cmd == 0x22){
-        latitude = data_value;
+        latitude[0] = data_bytes[0];
+        latitude[1] = data_bytes[1];
+        latitude[2] = data_bytes[2];
     } else if(cmd == 0x23){
-        altitude = data_value;
+        altitude[0] = data_bytes[0];
+        altitude[1] = data_bytes[1];
+        altitude[2] = data_bytes[2];;
     }
 
     if (cmd == 0x31){
         Serial.print("Saved Data: ");
-        Serial.print(longitude);
+        Serial.print(parseValue(longitude));
         Serial.print(" ");
-        Serial.print(latitude);
+        Serial.print(parseValue(latitude));
         Serial.print(" ");
-        Serial.println(altitude);
+        Serial.println(parseValue(altitude));
         Serial.println("Send GPS Data");
+
+        Serial.write(deviceState);
+        if(deviceState == DEVICE_STATE_SLEEP){
+            //Prepare TTN Send Data
+            appDataSize = 10;
+            appData[0] = 0x01;  // Byte to Signal Data Type
+            appData[1] = latitude[0];  // Latitude
+            appData[2] = latitude[1];
+            appData[3] = latitude[2];
+            appData[4] = longitude[0];  // Longitude
+            appData[5] = longitude[1];
+            appData[6] = longitude[2];
+            appData[7] = altitude[0];  // Altitude
+            appData[8] = altitude[1];
+            appData[9] = altitude[2];
+            //deviceState = DEVICE_STATE_SEND;
+        } else{
+            Serial.write(deviceState);
+        }
     }
 
 
@@ -192,7 +206,7 @@ void loop()
         {
             LoRaWAN.displaySending();
             //Tx Frame already prepared ad this point in future by onIicRecieve
-            prepareTxFrame( appPort );
+            //prepareTxFrame( appPort );
             LoRaWAN.send();
             deviceState = DEVICE_STATE_SLEEP;
             break;
