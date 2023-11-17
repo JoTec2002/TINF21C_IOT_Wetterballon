@@ -2,7 +2,7 @@ import requests
 from loguru import logger
 from requests import HTTPError
 
-__BASE_URL__ = "https://tinf-21-c-iot-wetterballon.vercel.app/"
+__BASE_URL__ = "https://tinf-21-c-iot-wetterballon.vercel.app"
 __APP_URL__ = "/api/messure"
 __API_KEY__ = "65Z60oSyECPdlcCwa6LZ"
 
@@ -46,6 +46,12 @@ class DirectConnection:
                 self.status = False
         except HTTPError:
             logger.info("Http disconnected")
+            self.status = False
+        except MaxRetryError:
+            print("Http disconnected")
+            self.status = False
+        except ConnectionError:
+            print("Http disconnected")
             self.status = False
         return False
 
