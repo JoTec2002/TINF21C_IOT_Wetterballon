@@ -1,26 +1,10 @@
 "use client";
 import {MapContainer, Marker, Polyline, Popup, TileLayer,} from "react-leaflet";
-import axios from "axios";
-import {Messure} from "@/types/messure";
 import { Gpsdata } from "@/types/gpsdata";
+import {parseClockTime, parseDate} from "@/helpers/DateToString";
 
-const getGPSData = async () => {
-  const locData: Messure = (await axios.get("/api/messure", {headers: {"flightid": "2"}})).data
-  return locData.gpsdata;
-}
-
-const parseDate = (value: Date) => {
-  return value.getDay().toString() + '.' + value.getMonth().toString() + '.' + value.getFullYear().toString()
-}
-
-const parseClockTime = (value: Date) => {
-  return value.getHours().toString() + ':' + value.getMinutes().toString() + ':' + value.getSeconds().toString()
-}
-
-// eslint-disable-next-line @next/next/no-async-client-component
-const LeafletMap = async () => {
-  let locations: Gpsdata[] = [];
-  locations = await getGPSData();
+const BalloonMap = (props : { locations : Gpsdata[]}) => {
+    const locations = props.locations;
 
   return (
       <MapContainer
@@ -55,4 +39,4 @@ const LeafletMap = async () => {
   );
 };
 
-export default LeafletMap;
+export default BalloonMap;
