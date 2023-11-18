@@ -3,6 +3,7 @@ import json
 from loguru import logger
 from smbus2 import SMBus
 
+from Communication.Database_Buffer import DatabaseBuffer
 from Communication.DirectConnection import DirectConnection
 from Communication.LoRaConnection import LoRaConnection
 
@@ -10,6 +11,7 @@ from Communication.LoRaConnection import LoRaConnection
 class Communication:
     def __init__(self, bus: SMBus):
         # Define Communication stati
+        self.database_buffer = DatabaseBuffer()
         self.directConnection = DirectConnection()
         self.loraConnection = LoRaConnection(bus)
 
@@ -20,14 +22,17 @@ class Communication:
     def send_gps_data(self, gps_data):
         #TODO check if GPS Data status is 3D Fixed - just than save Datapoint
 
+        del (gps_data['status'])
+        del (gps_data['tiff'])
+
         # write all values to SD Card (SQLITE DB)
+        self.database_buffer.add_gps_data(gps_data)
         # TODO
+
 
         # check for changed Sensor values
         # TODO
 
-        del (gps_data['status'])
-        del (gps_data['tiff'])
 
         gps_data_api = {'gpsdata': gps_data}
         gps_data_json = json.dumps(gps_data_api)
