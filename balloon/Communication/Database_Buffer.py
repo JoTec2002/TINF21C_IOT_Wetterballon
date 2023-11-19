@@ -15,21 +15,21 @@ CREATE TABLE IF NOT EXISTS `gpsdata` (
 )"""
 
 __SQL_CREATE_TEMP_OUTDOOR_TABLE__ = """
-CREATE TABLE `temperatureOutdoor` (
+CREATE TABLE IF NOT EXISTS `temperatureOutdoor` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   `time` datetime(3) NOT NULL,
   `value` double NOT NULL
 )"""
 
 __SQL_CREATE_HUMID_OUTDOOR_TABLE__ = """
-CREATE TABLE `humidityOutdoor` (
+CREATE TABLE IF NOT EXISTS `humidityOutdoor` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   `time` datetime(3) NOT NULL,
   `value` double NOT NULL
 )"""
 
 __SQL_CREATE_AIRPRESSURE_TABLE__ = """
-CREATE TABLE `airpressure` (
+CREATE TABLE IF NOT EXISTS `airpressure` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   `time` datetime(3) NOT NULL,
   `value` double NOT NULL
@@ -48,6 +48,8 @@ __SQL_INSERT_HUMID_OUTDOOR_ROW__ = """INSERT INTO `humidityOutdoor` (
 __SQL_INSERT_AIRPRESSURE_ROW__ = """INSERT INTO `airpressure` (
     `time`, `value`) VALUES (:time, :value);"""
 
+from loguru import logger
+
 
 class DatabaseBuffer:
     def __init__(self):
@@ -56,12 +58,14 @@ class DatabaseBuffer:
          """
         try:
             self.db_conn = sqlite3.connect("db/databuffer.db", check_same_thread=False)
-            print(sqlite3.version)
         except Error as e:
-            print(e)
+            logger.error(e)
 
         #create needed tables
         self.create_table(__SQL_CREATE_GPS_TABLE__)
+        self.create_table(__SQL_CREATE_AIRPRESSURE_TABLE__)
+        self.create_table(__SQL_CREATE_TEMP_OUTDOOR_TABLE__)
+        self.create_table(__SQL_CREATE_HUMID_OUTDOOR_TABLE__)
 
     def create_table(self, create_table_sql: str):
         """ create a table from the create_table_sql statement
@@ -72,7 +76,7 @@ class DatabaseBuffer:
             c = self.db_conn.cursor()
             c.execute(create_table_sql)
         except Error as e:
-            print(e)
+            logger.error(e)
     pass
 
     def insert_data(self, insert_row_sql: str, data):

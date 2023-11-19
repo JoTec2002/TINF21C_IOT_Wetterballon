@@ -13,9 +13,6 @@ def string_to_bytes(val):
         ret_val.append(ord(c))
     return ret_val
 
-def float_to_bytes(val: float):
-    return bytearray(struct.pack("f", val))
-
 
 class LoRaConnection:
     def __init__(self, bus: SMBus):
