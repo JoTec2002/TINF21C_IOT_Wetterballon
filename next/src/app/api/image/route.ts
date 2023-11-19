@@ -1,5 +1,4 @@
 import {NextRequest} from "next/server";
-import {Messure} from "@/types/messure";
 import {prisma} from "@/db/db";
 
 export async function GET(req: NextRequest) {

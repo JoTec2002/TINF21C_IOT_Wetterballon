@@ -1,8 +1,14 @@
+'use client'
 import {useGlobalContext} from "@/components/globalProvider";
 import {useEffect, useState} from "react";
 import {Messure} from "@/types/messure";
 import {getMessure} from "@/api/messure";
-import BalloonMap from "@/components/BalloonMap";
+
+import dynamic from "next/dynamic";
+const BalloonMap = dynamic(() => import("@/components/BalloonMap"), {
+    loading: () => <p>loading...</p>,
+    ssr: false
+})
 
 const Dashboard = () => {
     const {balloonId, flightId} = useGlobalContext()

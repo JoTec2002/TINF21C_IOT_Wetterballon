@@ -1,11 +1,9 @@
-"use client";
-import {MapContainer, Marker, Polyline, Popup, TileLayer,} from "react-leaflet";
+"use client"
+import {MapContainer, Marker, Polyline, Popup, TileLayer} from "react-leaflet";
 import { Gpsdata } from "@/types/gpsdata";
 import {parseClockTime, parseDate} from "@/helpers/DateToString";
 
-const BalloonMap = (props : { locations : Gpsdata[]}) => {
-    const locations = props.locations;
-
+const BalloonMap = ({locations}: { locations:Gpsdata[] }) => {
   return (
       <MapContainer
           id="map"

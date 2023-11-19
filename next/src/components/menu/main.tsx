@@ -1,4 +1,4 @@
-'use Client';
+'use client'
 import Dashboard from "@/components/menu/dashboard";
 import ChooseFlight from "@/components/menu/chooseFlight";
 import ChooseBalloon from "@/components/menu/chooseBalloon";

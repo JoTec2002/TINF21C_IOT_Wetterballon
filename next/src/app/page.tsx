@@ -1,4 +1,3 @@
-'use client'
 import Navigationbar from '@/components/navigationbar';
 import Main from "@/components/menu/main";
 import {GlobalProvider} from "@/components/globalProvider";

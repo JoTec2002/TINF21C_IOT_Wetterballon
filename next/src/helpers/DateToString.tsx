@@ -1,5 +1,4 @@
-import {Simulate} from "react-dom/test-utils";
-import input = Simulate.input;
+'use client'
 
 export const DateToString = (input: Date) => {
     const value = new Date(input)

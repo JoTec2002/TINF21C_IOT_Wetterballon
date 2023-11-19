@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import axios from "axios";
 import {Flight} from "@/types/flight";
 

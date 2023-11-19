@@ -1,3 +1,4 @@
+'use client'
 import {Dropdown} from "flowbite-react";
 import {useGlobalContext} from "@/components/globalProvider";
 import {useEffect, useState} from "react";

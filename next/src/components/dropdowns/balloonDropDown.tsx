@@ -1,4 +1,4 @@
-'use Client';
+'use client'
 import {useGlobalContext} from "@/components/globalProvider";
 import {useEffect, useState} from "react";
 import {Balloon} from "@/types/ballon";

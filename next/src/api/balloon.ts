@@ -1,4 +1,4 @@
-'use Client';
+'use client'
 
 import axios from "axios";
 import {Balloon} from "@/types/ballon";
