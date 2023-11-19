@@ -1,7 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 
-__SQL_CREATE_GPS_TABLE__ = """CREATE TABLE IF NOT EXISTS `gpsdata` (
+__SQL_CREATE_GPS_TABLE__ = """
+CREATE TABLE IF NOT EXISTS `gpsdata` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   `time` datetime(3) NOT NULL,
   `satellites` int(11) NOT NULL,
@@ -13,9 +14,40 @@ __SQL_CREATE_GPS_TABLE__ = """CREATE TABLE IF NOT EXISTS `gpsdata` (
   `send_state` int(1) DEFAULT 0 NOT NULL
 )"""
 
+__SQL_CREATE_TEMP_OUTDOOR_TABLE__ = """
+CREATE TABLE `temperatureOutdoor` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  `time` datetime(3) NOT NULL,
+  `value` double NOT NULL
+)"""
+
+__SQL_CREATE_HUMID_OUTDOOR_TABLE__ = """
+CREATE TABLE `humidityOutdoor` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  `time` datetime(3) NOT NULL,
+  `value` double NOT NULL
+)"""
+
+__SQL_CREATE_AIRPRESSURE_TABLE__ = """
+CREATE TABLE `airpressure` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  `time` datetime(3) NOT NULL,
+  `value` double NOT NULL
+)"""
+
 __SQL_INSERT_GPS_ROW__ = """INSERT INTO `gpsdata` (
         `time`, `satellites`, `speed`, `course`, `altitude`, `longitude`, `latitude`)
          VALUES (:time, :satellites, :speed, :course, :altitude, :longitude, :latitude);"""
+
+__SQL_INSERT_TEMP_OUTDOOR_ROW__ = """INSERT INTO `temperatureOutdoor` (
+    `time`, `value`) VALUES (:time, :value);"""
+
+__SQL_INSERT_HUMID_OUTDOOR_ROW__ = """INSERT INTO `humidityOutdoor` (
+    `time`, `value`) VALUES (:time, :value);"""
+
+__SQL_INSERT_AIRPRESSURE_ROW__ = """INSERT INTO `airpressure` (
+    `time`, `value`) VALUES (:time, :value);"""
+
 
 class DatabaseBuffer:
     def __init__(self):
@@ -43,8 +75,20 @@ class DatabaseBuffer:
             print(e)
     pass
 
-    def add_gps_data(self, data):
+    def insert_data(self, insert_row_sql: str, data):
         cursor = self.db_conn.cursor()
-        cursor.execute(__SQL_INSERT_GPS_ROW__, data)
+        cursor.execute(insert_row_sql, data)
         self.db_conn.commit()
         return cursor.lastrowid
+
+    def add_gps_data(self, data):
+        return self.insert_data(__SQL_INSERT_GPS_ROW__, data)
+
+    def add_humidity_outdoor_data(self, data):
+        return self.insert_data(__SQL_INSERT_HUMID_OUTDOOR_ROW__, data)
+
+    def add_temperature_outdoor_data(self, data):
+        return self.insert_data(__SQL_INSERT_TEMP_OUTDOOR_ROW__, data)
+
+    def add_airpressure_data(self, data):
+        return self.insert_data(__SQL_INSERT_AIRPRESSURE_ROW__, data)

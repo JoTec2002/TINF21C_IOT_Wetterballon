@@ -25,14 +25,11 @@ class Communication:
         del (gps_data['status'])
         del (gps_data['tiff'])
 
-        # write all values to SD Card (SQLITE DB)
-        self.database_buffer.add_gps_data(gps_data)
-        # TODO
-
-
         # check for changed Sensor values
         # TODO
 
+        # write all changed values to SD Card (SQLITE DB)
+        row_id = self.database_buffer.add_gps_data(gps_data)
 
         gps_data_api = {'gpsdata': gps_data}
         gps_data_json = json.dumps(gps_data_api)
@@ -40,24 +37,27 @@ class Communication:
         if self.directConnection.status:
            logger.info(self.directConnection.send_gps_data(gps_data_json))
 
-        self.loraConnection.send_gps_data_minified(gps_data)
-        pass
+        if self.loraConnection.status:
+            self.loraConnection.send_gps_data_minified(gps_data)
 
     def send_temp_pressure_humidity_outdoor_data(self, temp_pressure_humidity_data):
-        # write all values to SD Card (SQLITE DB)
-        # TODO
+        airpressure_data_api = {'airpressure': {'time': temp_pressure_humidity_data['time'],
+                                                'value': temp_pressure_humidity_data['pressure']}}
+
+        humidity_outdoor_data_api = {'humidity_outdoor': {'time': temp_pressure_humidity_data['time'],
+                                                          'value': temp_pressure_humidity_data['humidity']}}
+
+        temperature_outdoor_data_api = {'temperature_outdoor': {'time': temp_pressure_humidity_data['time'],
+                                                                'value': temp_pressure_humidity_data['temperature']}}
 
         # check for changed Sensor values
         # TODO
 
-        airpressure_data_api = {'airpressure': {'time':temp_pressure_humidity_data['time'],
-                                                'value':temp_pressure_humidity_data['pressure']}}
+        # write all changed values to SD Card (SQLITE DB)
+        airpressure_row_id =            self.database_buffer.add_airpressure_data(airpressure_data_api["airpressure"])
+        humidity_outdoor_row_id =       self.database_buffer.add_humidity_outdoor_data(humidity_outdoor_data_api["humidity_outdoor"])
+        temperature_outdoor_row_id =    self.database_buffer.add_temperature_outdoor_data(temperature_outdoor_data_api["temperature_outdoor"])
 
-        humidity_outdoor_data_api = {'humidity_outdoor': {'time': temp_pressure_humidity_data['time'],
-                                                'value': temp_pressure_humidity_data['humidity']}}
-
-        temperature_outdoor_data_api = {'temperature_outdoor': {'time': temp_pressure_humidity_data['time'],
-                                                'value': temp_pressure_humidity_data['temperature']}}
 
         if self.directConnection.status:
             logger.info(self.directConnection.send_airpressure_data         (json.dumps(airpressure_data_api)))
