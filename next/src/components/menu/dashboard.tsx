@@ -5,6 +5,7 @@ import {Messure} from "@/types/messure";
 import {getMessure} from "@/api/messure";
 
 import dynamic from "next/dynamic";
+import HeightChart from "@/components/HeightChart";
 const BalloonMap = dynamic(() => import("@/components/BalloonMap"), {
     loading: () => <p>loading...</p>,
     ssr: false
@@ -33,6 +34,7 @@ const Dashboard = () => {
                 Flugdaten: <br/>
                 GPS-Anzahl: {messure.gpsdata.length}<br/>
                 <BalloonMap locations={messure.gpsdata} />
+                <HeightChart locations={messure.gpsdata} />
             </>)
 
 
