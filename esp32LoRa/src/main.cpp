@@ -80,11 +80,13 @@ int parseValue(const byte data[]){
     //Serial.println(val);
     return val;
 }
-
-//Sensor Values
-byte longitude[3];
-byte latitude[3];
-byte altitude[3];
+enum customDeviceState
+{
+    JOIN,
+    SEND,
+    SLEEP
+};
+enum customDeviceState CustomDeviceState = JOIN;
 
 int cmd = 0;
 void onIicRecive(int iicCount){
@@ -94,10 +96,7 @@ void onIicRecive(int iicCount){
      *  0x3.    Commands
      *
      *  0x21    GPS Data Longitude
-     *  0x22    GPS Data Latitude
-     *  0x23    Altitude
      *
-     *  0x31    Send GPS Data
      */
     //Serial.print("iicCount: ");
     //Serial.println(iicCount);
@@ -106,62 +105,68 @@ void onIicRecive(int iicCount){
     Serial.print("CMD: ");
     Serial.println(cmd);
 
-    byte data_bytes[3] = "";
-    if(iicCount == 4){
-        for (int i = 0; i < 3; i++) {
-            data_bytes[i] = Wire1.read();
-        }
+    byte data_bytes[9] = "";
+    for (int i = 0; i < (iicCount-1); i++) {
+        data_bytes[i] = Wire1.read();
     }
 
-    if (cmd == 0x21){
-        longitude[0] = data_bytes[0];
-        longitude[1] = data_bytes[1];
-        longitude[2] = data_bytes[2];
-    } else if(cmd == 0x22){
-        latitude[0] = data_bytes[0];
-        latitude[1] = data_bytes[1];
-        latitude[2] = data_bytes[2];
-    } else if(cmd == 0x23){
-        altitude[0] = data_bytes[0];
-        altitude[1] = data_bytes[1];
-        altitude[2] = data_bytes[2];;
+    Serial.print("Device State: ");
+    switch (CustomDeviceState) {
+        case JOIN:
+            Serial.println("Join");
+            break;
+        case SEND:
+            Serial.println("Send");
+            break;
+        case SLEEP:
+            Serial.println("Sleep");
+            break;
     }
 
-    if (cmd == 0x31){
-        Serial.print("Saved Data: ");
-        Serial.print(parseValue(longitude));
-        Serial.print(" ");
-        Serial.print(parseValue(latitude));
-        Serial.print(" ");
-        Serial.println(parseValue(altitude));
+    if (cmd == 0x21) {
         Serial.println("Send GPS Data");
+        Serial.print("Longitude: ");
+        Serial.println((data_bytes[2] + (data_bytes[1] << 8) + (data_bytes[0] << 16)));
+        Serial.print("Latitude: ");
+        Serial.println((data_bytes[5] + (data_bytes[4] << 8) + (data_bytes[3] << 16)));
+        Serial.print("Altitude: ");
+        Serial.println((data_bytes[8] + (data_bytes[1] << 7) + (data_bytes[6] << 16)));
 
-        Serial.write(deviceState);
-        if(deviceState == DEVICE_STATE_SLEEP){
-            //Prepare TTN Send Data
-            appDataSize = 10;
-            appData[0] = 0x01;  // Byte to Signal Data Type
-            appData[1] = latitude[0];  // Latitude
-            appData[2] = latitude[1];
-            appData[3] = latitude[2];
-            appData[4] = longitude[0];  // Longitude
-            appData[5] = longitude[1];
-            appData[6] = longitude[2];
-            appData[7] = altitude[0];  // Altitude
-            appData[8] = altitude[1];
-            appData[9] = altitude[2];
-            //deviceState = DEVICE_STATE_SEND;
-        } else{
-            Serial.write(deviceState);
-        }
+
+        //Prepare TTN Send Data
+        appDataSize = 10;
+        appData[0] = 0x01;  // Byte to Signal Data Type
+        appData[1] = data_bytes[0];  // Latitude
+        appData[2] = data_bytes[1];
+        appData[3] = data_bytes[2];
+        appData[4] = data_bytes[3];  // Longitude
+        appData[5] = data_bytes[4];
+        appData[6] = data_bytes[5];
+        appData[7] = data_bytes[6];  // Altitude
+        appData[8] = data_bytes[7];
+        appData[9] = data_bytes[8];
+        //deviceState = DEVICE_STATE_SEND;
     }
-
-
-
-
 }
+
+
 void onIicRequest(){
+    // Update Custom Device State
+    if (CustomDeviceState == JOIN && IsLoRaMacNetworkJoined){
+        CustomDeviceState = SLEEP;
+    }
     Serial.println("IIC Request");
+    switch (CustomDeviceState) {
+        case JOIN:
+            Wire1.write(0x01);
+            break;
+        case SEND:
+            Wire1.write(0x02);
+            break;
+        case SLEEP:
+            Wire1.write(0x03);
+            break;
+    }
 }
 
 void setup() {
@@ -200,6 +205,7 @@ void loop()
         {
             LoRaWAN.displayJoining();
             LoRaWAN.join();
+            // Just inits Join and than enters Sleep state
             break;
         }
         case DEVICE_STATE_SEND:
