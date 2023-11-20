@@ -132,7 +132,6 @@ void onIicRecive(int iicCount){
         Serial.print("Altitude: ");
         Serial.println((data_bytes[8] + (data_bytes[1] << 7) + (data_bytes[6] << 16)));
 
-
         //Prepare TTN Send Data
         appDataSize = 10;
         appData[0] = 0x01;  // Byte to Signal Data Type
@@ -145,17 +144,21 @@ void onIicRecive(int iicCount){
         appData[7] = data_bytes[6];  // Altitude
         appData[8] = data_bytes[7];
         appData[9] = data_bytes[8];
-        //deviceState = DEVICE_STATE_SEND;
+
+        if (CustomDeviceState == SLEEP){
+            CustomDeviceState = SEND;
+            deviceState = DEVICE_STATE_SEND;
+        }
     }
 }
 
-
 void onIicRequest(){
     // Update Custom Device State
+    // TODO check if functionality
     if (CustomDeviceState == JOIN && IsLoRaMacNetworkJoined){
         CustomDeviceState = SLEEP;
     }
-    Serial.println("IIC Request");
+    //Serial.println("IIC Request");
     switch (CustomDeviceState) {
         case JOIN:
             Wire1.write(0x01);
@@ -182,8 +185,7 @@ void setup() {
     }
     deviceState = DEVICE_STATE_INIT;
 
-    /*custom further Setup here*/
-    //IIC inity
+    //IIC init
     Wire1.begin(0x8, 21, 22, 100000);
     Wire1.onReceive(onIicRecive);
     Wire1.onRequest(onIicRequest);
@@ -214,6 +216,7 @@ void loop()
             //Tx Frame already prepared ad this point in future by onIicRecieve
             //prepareTxFrame( appPort );
             LoRaWAN.send();
+            CustomDeviceState = SLEEP;
             deviceState = DEVICE_STATE_SLEEP;
             break;
         }
