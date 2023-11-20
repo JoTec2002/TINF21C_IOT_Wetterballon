@@ -1,3 +1,6 @@
+import time
+from threading import Thread
+
 import requests
 from loguru import logger
 from requests import HTTPError
@@ -9,30 +12,27 @@ __API_KEY__ = "65Z60oSyECPdlcCwa6LZ"
 from urllib3.exceptions import MaxRetryError
 
 
+def check_connection():
+    try:
+        res = requests.get(url="https://icanhazip.com/")
+        if res.status_code == 200:
+            return True
+    except:
+        logger.warning("Http Disconnected")
+    return False
+
 class DirectConnection:
     def __init__(self):
-        self.status = False
-        self.check_connection()
+        self.status = check_connection()
+        if not self.status:
+            Thread(target=self.wait_on_reconnection()).start()
 
-        pass
-
-    def check_connection(self):
-        try:
-            res = requests.get(url="https://icanhazip.com/")
-            if res.status_code == 200:
-                self.status = True
-            else:
-                self.status = False
-        except HTTPError:
-            print("Http disconnected")
-            self.status = False
-        except MaxRetryError:
-            print("Http disconnected")
-            self.status = False
-        except ConnectionError:
-            print("Http disconnected")
-            self.status = False
-
+    def wait_on_reconnection(self):
+        while not self.status:
+            self.status = check_connection()
+            time.sleep(20)
+        logger.info("HTTP Connection reestablished")
+        #TODO send all Bufferd Data now
 
     def send_data(self, data):
         try:
@@ -44,15 +44,10 @@ class DirectConnection:
                 print(res.content)
                 #TODO realy handle error
                 self.status = False
-        except HTTPError:
-            logger.info("Http disconnected")
+        except:
+            logger.warning("Http Disconnected")
             self.status = False
-        except MaxRetryError:
-            print("Http disconnected")
-            self.status = False
-        except ConnectionError:
-            print("Http disconnected")
-            self.status = False
+            Thread(target=self.wait_on_reconnection()).start()
         return False
 
     def send_gps_data(self, gpsdata):

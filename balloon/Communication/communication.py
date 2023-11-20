@@ -21,7 +21,7 @@ class Communication:
 
     def send_gps_data(self, gps_data):
         #check if GPS Data status is 3D Fixed - just than save Datapoint
-        if gps_data['status'] == "Location 3D Fix":
+        if not gps_data['status'] == "Location 3D Fix":
             return -1
 
         del (gps_data['status'])
