@@ -25,7 +25,7 @@ class DirectConnection:
     def __init__(self):
         self.status = check_connection()
         if not self.status:
-            Thread(target=self.wait_on_reconnection()).start()
+            Thread(target=self.wait_on_reconnection).start()
 
     def wait_on_reconnection(self):
         while not self.status:
@@ -47,7 +47,7 @@ class DirectConnection:
         except:
             logger.warning("Http Disconnected")
             self.status = False
-            Thread(target=self.wait_on_reconnection()).start()
+            Thread(target=self.wait_on_reconnection).start()
         return False
 
     def send_gps_data(self, gpsdata):

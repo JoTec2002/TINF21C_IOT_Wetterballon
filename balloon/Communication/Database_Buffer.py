@@ -67,6 +67,8 @@ class DatabaseBuffer:
         self.create_table(__SQL_CREATE_TEMP_OUTDOOR_TABLE__)
         self.create_table(__SQL_CREATE_HUMID_OUTDOOR_TABLE__)
 
+        logger.info("Database Buffer init successful")
+
     def create_table(self, create_table_sql: str):
         """ create a table from the create_table_sql statement
         :param create_table_sql: a CREATE TABLE statement
@@ -82,8 +84,9 @@ class DatabaseBuffer:
     def insert_data(self, insert_row_sql: str, data):
         cursor = self.db_conn.cursor()
         cursor.execute(insert_row_sql, data)
-        self.db_conn.commit()
-        return cursor.lastrowid
+        lastrowid = cursor.lastrowid
+        cursor.close()
+        return lastrowid
 
     def add_gps_data(self, data):
         return self.insert_data(__SQL_INSERT_GPS_ROW__, data)
