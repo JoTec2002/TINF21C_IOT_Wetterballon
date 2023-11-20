@@ -1,5 +1,6 @@
 __ESP_Address__=0x08
 
+from loguru import logger
 from smbus2 import SMBus
 
 def string_to_bytes(val):
@@ -17,7 +18,8 @@ class LoRaConnection:
         try:
             self.LoRa_status = bus.read_byte_data(__ESP_Address__, 0x00)
             self.status = True
-        except:
+        except OSError:
+            logger.warning("LoRa Module not reachable")
             self.status = False
             self.LoRa_status = 0
 
@@ -26,11 +28,18 @@ class LoRaConnection:
 
     def write_data(self, register, byte_buffer):
         #read current LoraDevice State
-        self.LoRa_status = self.bus.read_byte_data(__ESP_Address__, 0x00)
+        try:
+            self.LoRa_status = self.bus.read_byte_data(__ESP_Address__, 0x00)
+        except OSError:
+            logger.warning("LoRa Module not reachable")
+            self.status = False
+            self.LoRa_status = 0
+            return
         if self.LoRa_status == 0x03:
             try:
                 self.bus.write_i2c_block_data(__ESP_Address__, register, byte_buffer)
-            except:
+            except OSError:
+                logger.warning("LoRa Module not reachable")
                 self.status = False
                 self.LoRa_status = 0
 
