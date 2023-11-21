@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import HeightTime from "@/components/charts/HeightTime";
 import TempTime from "@/components/charts/TempTime";
 import HumidityTime from "@/components/charts/HumidityTIme";
+import PressureTime from "@/components/charts/PressureTime";
 
 
 const BalloonMap = dynamic(() => import("@/components/BalloonMap"), {
@@ -49,6 +50,7 @@ const Dashboard = () => {
                     <HeightTime locations={messure.gpsdata} />
                     <TempTime tempIndoor={messure.temperature_indoor} tempOutdoor={messure.temperature_outdoor} />
                     <HumidityTime humIndoor={messure.humidity_indoor} humOutdoor={messure.humidity_outdoor} />
+                    <PressureTime pressures={messure.airpressure} />
                 </div>
             </>)
 
