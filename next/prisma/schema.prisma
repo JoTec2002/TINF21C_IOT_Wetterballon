@@ -39,9 +39,9 @@ model gpsdata {
   time   DateTime
   source String
 
-  satellites Int
-  speed      Float
-  course     Float
+  satellites Int?
+  speed      Float?
+  course     Float?
   altitude   Float
   longitude  Float
   latitude   Float
