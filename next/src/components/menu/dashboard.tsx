@@ -5,7 +5,10 @@ import {Messure} from "@/types/messure";
 import {getMessure} from "@/api/messure";
 
 import dynamic from "next/dynamic";
-import HeightChart from "@/components/HeightChart";
+import HeightTime from "@/components/charts/HeightTime";
+import TempTime from "@/components/charts/TempTime";
+
+
 const BalloonMap = dynamic(() => import("@/components/BalloonMap"), {
     loading: () => <p>loading...</p>,
     ssr: false
@@ -28,13 +31,23 @@ const Dashboard = () => {
            <>Daten werden geladen</>
             :
             <>
-                Gewählter Ballon: {balloonId} <br/>
-                Gewählter Flug: {flightId} <br/>
+                Gewählter Ballon: {balloonId}
                 <br/>
-                Flugdaten: <br/>
-                GPS-Anzahl: {messure.gpsdata.length}<br/>
+                Gewählter Flug: {flightId}
+                <br/>
+                <br/>
+                Flugdaten:
+                <br/>
+                GPS-Anzahl: {messure.gpsdata.length}
+                <br/>
+                <h1>Map mit gemessenen Positionen</h1>
                 <BalloonMap locations={messure.gpsdata} />
-                <HeightChart locations={messure.gpsdata} />
+                <br/>
+                <h1>Graphen zu den gemessenen Werten:</h1>
+                <div id={"chart-view"} className={"grid grid-cols-1 w-3/4 ml-[10%] mt-5"}>
+                    <HeightTime locations={messure.gpsdata} />
+                    <TempTime tempIndoor={messure.temperature_indoor} tempOutdoor={messure.temperature_outdoor} />
+                </div>
             </>)
 
 
