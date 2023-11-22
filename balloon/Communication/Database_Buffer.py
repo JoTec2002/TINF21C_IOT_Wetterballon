@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error
+from loguru import logger
 
 __SQL_CREATE_GPS_TABLE__ = """
 CREATE TABLE IF NOT EXISTS `gpsdata` (
@@ -48,7 +49,7 @@ __SQL_INSERT_HUMID_OUTDOOR_ROW__ = """INSERT INTO `humidityOutdoor` (
 __SQL_INSERT_AIRPRESSURE_ROW__ = """INSERT INTO `airpressure` (
     `time`, `value`) VALUES (:time, :value);"""
 
-from loguru import logger
+__SQL_DELETE_GPS_ROW__ = """DELETE FROM `gpsdata` WHERE `id`=?"""
 
 
 class DatabaseBuffer:
@@ -81,7 +82,7 @@ class DatabaseBuffer:
             logger.error(e)
     pass
 
-    def insert_data(self, insert_row_sql: str, data):
+    def db_sql_operation(self, insert_row_sql: str, data):
         cursor = self.db_conn.cursor()
         cursor.execute(insert_row_sql, data)
         lastrowid = cursor.lastrowid
@@ -89,13 +90,17 @@ class DatabaseBuffer:
         return lastrowid
 
     def add_gps_data(self, data):
-        return self.insert_data(__SQL_INSERT_GPS_ROW__, data)
+        return self.db_sql_operation(__SQL_INSERT_GPS_ROW__, data)
 
     def add_humidity_outdoor_data(self, data):
-        return self.insert_data(__SQL_INSERT_HUMID_OUTDOOR_ROW__, data)
+        return self.db_sql_operation(__SQL_INSERT_HUMID_OUTDOOR_ROW__, data)
 
     def add_temperature_outdoor_data(self, data):
-        return self.insert_data(__SQL_INSERT_TEMP_OUTDOOR_ROW__, data)
+        return self.db_sql_operation(__SQL_INSERT_TEMP_OUTDOOR_ROW__, data)
 
     def add_airpressure_data(self, data):
-        return self.insert_data(__SQL_INSERT_AIRPRESSURE_ROW__, data)
+        return self.db_sql_operation(__SQL_INSERT_AIRPRESSURE_ROW__, data)
+
+    def remove_gps_data_(self, row_id):
+        return self.db_sql_operation(__SQL_DELETE_GPS_ROW__, (row_id, ))
+

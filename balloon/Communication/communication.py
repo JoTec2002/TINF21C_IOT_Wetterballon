@@ -15,6 +15,8 @@ class Communication:
         self.directConnection = DirectConnection()
         self.loraConnection = LoRaConnection(bus)
 
+        self.last_gps_data = {"longitude": 0, "latitude": 0, "altitude": 0}
+
         logger.info(self.directConnection.status)
         logger.info(self.loraConnection.status)
 
@@ -28,7 +30,12 @@ class Communication:
         del (gps_data['tiff'])
 
         # check for changed Sensor values
-        # TODO
+        new_data = {"longitude": gps_data["longitude"], "latitude": gps_data["latitude"], "altitude": gps_data["altitude"]}
+        if new_data == self.last_gps_data:
+            return 1
+        else:
+            self.last_gps_data = new_data
+            #logger.info("new GPS data")
 
         # write all changed values to SD Card (SQLITE DB)
         row_id = self.database_buffer.add_gps_data(gps_data)
@@ -36,11 +43,17 @@ class Communication:
         gps_data_api = {'gpsdata': gps_data}
         gps_data_json = json.dumps(gps_data_api)
 
+        succsesful_send = False
         if self.directConnection.status:
-           logger.info(self.directConnection.send_gps_data(gps_data_json))
+           succsesful_send = self.directConnection.send_gps_data(gps_data_json)
+        elif self.loraConnection.status:
+            succsesful_send = self.loraConnection.send_gps_data_minified(gps_data)
+        else:
+            return -1
 
-        if self.loraConnection.status:
-            self.loraConnection.send_gps_data_minified(gps_data)
+        if succsesful_send:
+            self.database_buffer.remove_gps_data_(row_id)
+
 
     def send_temp_pressure_humidity_outdoor_data(self, temp_pressure_humidity_data):
         airpressure_data_api = {'airpressure': {'time': temp_pressure_humidity_data['time'],
