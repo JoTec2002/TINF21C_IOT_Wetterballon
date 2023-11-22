@@ -23,7 +23,8 @@ class MPU9050:
             mx, my, mz = AK8963_conv()  # read and convert AK8963 magnetometer data
 
             return {"accel": [ax, ay, az], "gyro":[wx, wy, wz], "magnet":[mx, my, mz]}
-        except:
+        except Exception as e:
+            print (e)
             pass
-        Exception("failed to read data")
+        #Exception("failed to read data")
         return False
