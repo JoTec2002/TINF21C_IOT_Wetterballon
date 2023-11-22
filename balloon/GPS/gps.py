@@ -2,6 +2,8 @@ import serial
 import time
 from datetime import datetime
 
+from RPi import GPIO
+
 
 def parse_response(response, message_command):
     """
@@ -49,6 +51,9 @@ class Gps:
         Defines class wide variables
         :return:
         """
+        self.PowerPin = 18
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.PowerPin, GPIO.OUT)
         self.Connection = serial.Serial(port='/dev/ttyS0', baudrate=115200, timeout=1, xonxoff=True, exclusive=True)
         self.power = False
 
@@ -56,6 +61,7 @@ class Gps:
         if not self.power_up():
             # GPS power up not successful
             # TODO: throw and Handle Error here
+            return
             pass
         print("GPS Powered UP!")
 
@@ -97,7 +103,11 @@ class Gps:
                 return True
             else:
                 # power up gps
-                print("GPS Power up Attempt: "+str(x))
+                print("GPS Power up Attempt: " + str(x))
+                GPIO.output(self.PowerPin, GPIO.HIGH)
+                time.sleep(1)
+                GPIO.output(self.PowerPin, GPIO.LOW)
+                time.sleep(1)
                 self.Connection.write(str.encode('AT+CGPSPWR=1' + '\r\n'))
                 time.sleep(5)
         # GPS not running after 5 Startup Attempts

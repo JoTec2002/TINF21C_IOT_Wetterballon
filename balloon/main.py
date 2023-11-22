@@ -20,18 +20,20 @@ from MPU9050.mpu9050 import MPU9050
 
 class Main:
     def __init__(self):
+        #I2C Bus
+        port = 1
+        bus = smbus2.SMBus(port)
+
         logger.add("Logs.log")
 
         self.GPS = Gps()
         logger.info("GPS init successful")
 
         #BME280
-        port = 1
-        bus = smbus2.SMBus(port)
         self.BME280 = Mbme280(bus, address = 0x76)
         logger.info("BME280 init successful")
 
-
+        #MPU 9050
         self.MPU9050 = MPU9050()
         logger.info("MPU9050 init successful")
 
