@@ -9,6 +9,7 @@ import time
 from threading import Thread
 
 import smbus2
+from RPi import GPIO
 from loguru import logger
 
 from BME280.Mbme280 import Mbme280
@@ -72,5 +73,6 @@ if __name__ == "__main__":
     try:
         main.loop()
     except KeyboardInterrupt:
+        GPIO.cleanup()
         print("End")
 
