@@ -26,15 +26,34 @@ class Communication:
         return_gps = self.send_gps_data(gps_data)
         return_temp_pressure_humidity = self.send_temp_pressure_humidity_outdoor_data(temp_pressure_humidity_data)
 
+        if return_gps == -2 or return_temp_pressure_humidity == -2:
+            # on -2 return data should not be send via LoRa
+            print("return")
+            return
+
         if return_gps > 0 and return_temp_pressure_humidity > 0:
-            #TODO send via Lora
+            #if both gps and temp_pressure_humidity cloudn't send directly
+
+            #create new total dict
+            del (gps_data['status'])
+            del (gps_data['tiff'])
+            del (gps_data['time'])
+            del (temp_pressure_humidity_data['time'])
+            lora_data = gps_data + temp_pressure_humidity_data
+            lora_data_list = list(lora_data.values())
+
+            print(lora_data)
+            #send via Lora
+            self.loraConnection.send_all_data(lora_data_list)
+
+            #TODO Flag in DB as send via LoRa
             pass
 
 
     def send_gps_data(self, gps_data):
         #check if GPS Data status is 3D Fixed - just than save Datapoint
         if not gps_data['status'] == "Location 3D Fix":
-            return -1
+            return -2
 
         del (gps_data['status'])
         del (gps_data['tiff'])
@@ -42,7 +61,7 @@ class Communication:
         # check for changed Sensor values
         new_data = {"longitude": gps_data["longitude"], "latitude": gps_data["latitude"], "altitude": gps_data["altitude"]}
         if new_data == self.last_gps_data:
-            return -1
+            return -2
         else:
             self.last_gps_data = new_data
             #logger.info("new GPS data")
@@ -67,7 +86,7 @@ class Communication:
                     "humidity": temp_pressure_humidity_data["humidity"],
                     "pressure": temp_pressure_humidity_data["pressure"]}
         if new_data == self.last_temp_pressure_humidity_data:
-            return -1
+            return -2
         else:
             self.last_gps_data = new_data
 
