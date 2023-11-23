@@ -23,8 +23,6 @@ class LoRaConnection:
             self.status = False
             self.LoRa_status = 0
 
-        self.status = True
-        pass
 
     def write_data(self, register, byte_buffer):
         #read current LoraDevice State

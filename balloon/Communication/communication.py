@@ -43,16 +43,14 @@ class Communication:
         gps_data_api = {'gpsdata': gps_data}
         gps_data_json = json.dumps(gps_data_api)
 
-        succsesful_send = False
         if self.directConnection.status:
-           succsesful_send = self.directConnection.send_gps_data(gps_data_json)
+           self.directConnection.send_gps_data(gps_data_json)
+           self.database_buffer.remove_gps_data(row_id)
         elif self.loraConnection.status:
-            succsesful_send = self.loraConnection.send_gps_data_minified(gps_data)
+            self.loraConnection.send_gps_data_minified(gps_data)
         else:
             return -1
 
-        if succsesful_send:
-            self.database_buffer.remove_gps_data_(row_id)
 
 
     def send_temp_pressure_humidity_outdoor_data(self, temp_pressure_humidity_data):

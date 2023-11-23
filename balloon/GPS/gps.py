@@ -82,7 +82,7 @@ class Gps:
         :return: response
         """
         self.Connection.write(str.encode(command + '\r\n'))
-        time.sleep(1)
+        time.sleep(0.5)
         return str(self.Connection.read(self.Connection.inWaiting()))
 
     def power_up(self):

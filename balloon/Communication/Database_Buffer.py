@@ -101,6 +101,9 @@ class DatabaseBuffer:
     def add_airpressure_data(self, data):
         return self.db_sql_operation(__SQL_INSERT_AIRPRESSURE_ROW__, data)
 
-    def remove_gps_data_(self, row_id):
+    def remove_gps_data(self, row_id):
         return self.db_sql_operation(__SQL_DELETE_GPS_ROW__, (row_id, ))
+
+    def update_lorasend_gps(self, row_id):
+        return False
 
