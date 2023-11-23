@@ -17,8 +17,8 @@ class Communication:
 
         self.last_gps_data = {"longitude": 0, "latitude": 0, "altitude": 0}
 
-        logger.info(self.directConnection.status)
-        logger.info(self.loraConnection.status)
+        logger.info("Direct Connetion: " + self.directConnection.status)
+        logger.info("Lora Module Connection: " + self.loraConnection.status)
 
 
     def send_gps_data(self, gps_data):
