@@ -6,7 +6,7 @@
 # This code handles the smbus
 # communications between the RPi and the
 # MPU9250 IMU. For testing the MPU9250
-# see: imu_test.py
+# see: imu_test.py | https://makersportal.com/blog/calibration-of-an-inertial-measurement-unit-with-raspberry-pi
 #
 #########################################
 #

@@ -2,6 +2,8 @@ import serial
 import time
 from datetime import datetime
 
+from RPi import GPIO
+
 
 def parse_response(response, message_command):
     """
@@ -49,6 +51,9 @@ class Gps:
         Defines class wide variables
         :return:
         """
+        self.PowerPin = 18
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.PowerPin, GPIO.OUT)
         self.Connection = serial.Serial(port='/dev/ttyS0', baudrate=115200, timeout=1, xonxoff=True, exclusive=True)
         self.power = False
 
@@ -56,6 +61,7 @@ class Gps:
         if not self.power_up():
             # GPS power up not successful
             # TODO: throw and Handle Error here
+            return
             pass
         print("GPS Powered UP!")
 
@@ -76,7 +82,7 @@ class Gps:
         :return: response
         """
         self.Connection.write(str.encode(command + '\r\n'))
-        time.sleep(1)
+        time.sleep(0.5)
         return str(self.Connection.read(self.Connection.inWaiting()))
 
     def power_up(self):
@@ -97,7 +103,11 @@ class Gps:
                 return True
             else:
                 # power up gps
-                print("GPS Power up Attempt: "+str(x))
+                print("GPS Power up Attempt: " + str(x))
+                GPIO.output(self.PowerPin, GPIO.HIGH)
+                time.sleep(1)
+                GPIO.output(self.PowerPin, GPIO.LOW)
+                time.sleep(1)
                 self.Connection.write(str.encode('AT+CGPSPWR=1' + '\r\n'))
                 time.sleep(5)
         # GPS not running after 5 Startup Attempts
@@ -127,17 +137,21 @@ class Gps:
             return False
 
         ret_array["tiff"] =             location_array[5]
-        ret_array["num_satellites"] =    location_array[6]
-        ret_array["speed"] =            location_array[7]
-        ret_array["course"] =           location_array[8]
+        ret_array["satellites"] =       int(location_array[6])
+        ret_array["speed"] =            float(location_array[7])
+        ret_array["course"] =           float(location_array[8])
         ret_array["altitude"] =         float(location_array[3])
 
         if not location_array[1] == '0.000000':
-            ret_array["longitude"] = (parse_gps_to_decimal(location_array[1]))
+            ret_array["latitude"] = (parse_gps_to_decimal(location_array[1]))
+        else:
+            ret_array["latitude"] = float(location_array[1])
 
         if not location_array[2] == '0.000000':
-            ret_array["latitude"] = (parse_gps_to_decimal(location_array[2]))
+            ret_array["longitude"] = (parse_gps_to_decimal(location_array[2]))
+        else:
+            ret_array["longitude"] = float(location_array[2])
 
-        ret_array["utc_time"] = parese_date_from_string_to_datetime(location_array[4])
+        ret_array["time"] = ((parese_date_from_string_to_datetime(location_array[4])).isoformat())
 
         return ret_array
