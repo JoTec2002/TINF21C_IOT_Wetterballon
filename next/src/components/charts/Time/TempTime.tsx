@@ -4,7 +4,7 @@ import {parseClockTime} from "@/helpers/DateToString";
 
 const TempTime = ({tempIndoor, tempOutdoor}: {tempIndoor:ValueObj[], tempOutdoor:ValueObj[]}) => {
 
-    let data: any[][] = [["Time", "Temp_Außen", "Temp_Innen"]];
+    let data: any[][] = [["Zeit", "Innerhalb", "Außerhalb"]];
     const options = {
         title: "Temperatur über Zeit",
         vAxis: {title: "Temperatur in °C", minValue: 0},
@@ -15,12 +15,15 @@ const TempTime = ({tempIndoor, tempOutdoor}: {tempIndoor:ValueObj[], tempOutdoor
         data.push(tuple)
     }
     return (
+        (tempIndoor.length === 0 ?
+                <h1 className={"text-red-600"}> Keine Temperatur Daten vorhanden.</h1> :
         <Chart
             chartType="LineChart"
             data={data}
             height="200px"
             options={options}
         />
+        )
     )
 };
 

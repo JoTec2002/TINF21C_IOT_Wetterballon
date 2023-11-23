@@ -4,7 +4,7 @@ import {parseClockTime} from "@/helpers/DateToString";
 
 const HumidityTime = ({humIndoor, humOutdoor}: {humIndoor:ValueObj[], humOutdoor:ValueObj[]}) => {
 
-    let data: any[][] = [["Time", "Temp_Außen", "Temp_Innen"]];
+    let data: any[][] = [["Zeit", "Innen", "Außen"]];
     const options = {
         title: "Luftfeuchtigkeit über Zeit",
         vAxis: {title: "Luftfeuchtigkeit in g/m^3", minValue: 0},
@@ -15,12 +15,15 @@ const HumidityTime = ({humIndoor, humOutdoor}: {humIndoor:ValueObj[], humOutdoor
         data.push(tuple)
     }
     return (
+        (humIndoor.length === 0 ?
+                <h1 className={"text-red-600"}> Keine Luftfeuchtigkeit Daten vorhanden.</h1> :
         <Chart
             chartType="LineChart"
             data={data}
             height="200px"
             options={options}
         />
+        )
     )
 };
 

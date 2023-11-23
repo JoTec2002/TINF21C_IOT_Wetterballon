@@ -4,7 +4,7 @@ import {parseClockTime} from "@/helpers/DateToString";
 
 const HeightTime = ({locations}: { locations:Gpsdata[] }) => {
 
-    let data: any[][] = [["Time", "Height"]];
+    let data: any[][] = [["Zeit", "Höhe"]];
     const options = {
         title: "Höhe über Zeit",
         vAxis:  {title: "Höhe in m", minValue: 0},
@@ -15,12 +15,15 @@ const HeightTime = ({locations}: { locations:Gpsdata[] }) => {
         data.push(tuple)
     }
     return (
+        (locations.length === 0 ?
+                <h1 className={"text-red-600"}> Keine Luftdruck Daten vorhanden.</h1> :
         <Chart
             chartType="LineChart"
             data={data}
             height="200px"
             options={options}
         />
+        )
     )
 };
 
