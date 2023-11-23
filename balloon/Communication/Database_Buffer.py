@@ -15,41 +15,27 @@ CREATE TABLE IF NOT EXISTS `gpsdata` (
   `send_state` int(1) DEFAULT 0 NOT NULL
 )"""
 
-__SQL_CREATE_TEMP_OUTDOOR_TABLE__ = """
-CREATE TABLE IF NOT EXISTS `temperatureOutdoor` (
+__SQL_CREATE_TEMP_PRESSURE_HUMIDITY_TABLE__ = """
+CREATE TABLE IF NOT EXISTS `temp_pressure_humidity` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   `time` datetime(3) NOT NULL,
-  `value` double NOT NULL
+  `temperature` double NOT NULL,
+  `humidity` double NOT NULL,
+  `airpressure` double NOT NULL
 )"""
 
-__SQL_CREATE_HUMID_OUTDOOR_TABLE__ = """
-CREATE TABLE IF NOT EXISTS `humidityOutdoor` (
-  `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  `time` datetime(3) NOT NULL,
-  `value` double NOT NULL
-)"""
-
-__SQL_CREATE_AIRPRESSURE_TABLE__ = """
-CREATE TABLE IF NOT EXISTS `airpressure` (
-  `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  `time` datetime(3) NOT NULL,
-  `value` double NOT NULL
-)"""
 
 __SQL_INSERT_GPS_ROW__ = """INSERT INTO `gpsdata` (
         `time`, `satellites`, `speed`, `course`, `altitude`, `longitude`, `latitude`)
          VALUES (:time, :satellites, :speed, :course, :altitude, :longitude, :latitude);"""
 
-__SQL_INSERT_TEMP_OUTDOOR_ROW__ = """INSERT INTO `temperatureOutdoor` (
-    `time`, `value`) VALUES (:time, :value);"""
+__SQL_INSERT_TEMP_PRESSURE_HUMIDITY_ROW__ = """INSERT INTO `temp_pressure_humidity` (
+    `time`, `temperature`, `humidity`,  `airpressure`) VALUES (:time, :temperature, :humidity, :pressure);"""
 
-__SQL_INSERT_HUMID_OUTDOOR_ROW__ = """INSERT INTO `humidityOutdoor` (
-    `time`, `value`) VALUES (:time, :value);"""
-
-__SQL_INSERT_AIRPRESSURE_ROW__ = """INSERT INTO `airpressure` (
-    `time`, `value`) VALUES (:time, :value);"""
 
 __SQL_DELETE_GPS_ROW__ = """DELETE FROM `gpsdata` WHERE `id`=?"""
+
+__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_ROW__ = """DELETE FROM `temp_pressure_humidity` WHERE `id`=?"""
 
 
 class DatabaseBuffer:
@@ -64,9 +50,7 @@ class DatabaseBuffer:
 
         #create needed tables
         self.create_table(__SQL_CREATE_GPS_TABLE__)
-        self.create_table(__SQL_CREATE_AIRPRESSURE_TABLE__)
-        self.create_table(__SQL_CREATE_TEMP_OUTDOOR_TABLE__)
-        self.create_table(__SQL_CREATE_HUMID_OUTDOOR_TABLE__)
+        self.create_table(__SQL_CREATE_TEMP_PRESSURE_HUMIDITY_TABLE__)
 
         logger.info("Database Buffer init successful")
 
@@ -89,20 +73,18 @@ class DatabaseBuffer:
         cursor.close()
         return lastrowid
 
+    #GPS
     def add_gps_data(self, data):
         return self.db_sql_operation(__SQL_INSERT_GPS_ROW__, data)
-
-    def add_humidity_outdoor_data(self, data):
-        return self.db_sql_operation(__SQL_INSERT_HUMID_OUTDOOR_ROW__, data)
-
-    def add_temperature_outdoor_data(self, data):
-        return self.db_sql_operation(__SQL_INSERT_TEMP_OUTDOOR_ROW__, data)
-
-    def add_airpressure_data(self, data):
-        return self.db_sql_operation(__SQL_INSERT_AIRPRESSURE_ROW__, data)
-
     def remove_gps_data(self, row_id):
         return self.db_sql_operation(__SQL_DELETE_GPS_ROW__, (row_id, ))
+
+    #temp_pressure_humidity (BME 280)
+    def add_temp_pressure_humidity_data(self, data):
+        return self.db_sql_operation(__SQL_INSERT_TEMP_PRESSURE_HUMIDITY_ROW__, data)
+    def remove_temp_pressure_humidity_data(self, row_id):
+        return self.db_sql_operation(__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_ROW__, (row_id, ))
+
 
     def update_lorasend_gps(self, row_id):
         return False

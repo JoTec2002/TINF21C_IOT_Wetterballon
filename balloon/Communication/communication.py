@@ -16,9 +16,19 @@ class Communication:
         self.loraConnection = LoRaConnection(bus)
 
         self.last_gps_data = {"longitude": 0, "latitude": 0, "altitude": 0}
+        self.last_temp_pressure_humidity_data = {"temperature": 0, "humidity":0, "pressure":0}
 
         logger.info("Direct Connetion: " + str(self.directConnection.status))
         logger.info("Lora Module Connection: " + str(self.loraConnection.status))
+
+
+    def send_data(self, gps_data, temp_pressure_humidity_data):
+        return_gps = self.send_gps_data(gps_data)
+        return_temp_pressure_humidity = self.send_temp_pressure_humidity_outdoor_data(temp_pressure_humidity_data)
+
+        if return_gps > 0 and return_temp_pressure_humidity > 0:
+            #TODO send via Lora
+            pass
 
 
     def send_gps_data(self, gps_data):
@@ -32,12 +42,12 @@ class Communication:
         # check for changed Sensor values
         new_data = {"longitude": gps_data["longitude"], "latitude": gps_data["latitude"], "altitude": gps_data["altitude"]}
         if new_data == self.last_gps_data:
-            return 1
+            return -1
         else:
             self.last_gps_data = new_data
             #logger.info("new GPS data")
 
-        # write all changed values to SD Card (SQLITE DB)
+        # write all values to SD Card (SQLITE DB)
         row_id = self.database_buffer.add_gps_data(gps_data)
 
         gps_data_api = {'gpsdata': gps_data}
@@ -46,14 +56,25 @@ class Communication:
         if self.directConnection.status:
            self.directConnection.send_gps_data(gps_data_json)
            self.database_buffer.remove_gps_data(row_id)
-        elif self.loraConnection.status:
-            self.loraConnection.send_gps_data_minified(gps_data)
-        else:
-            return -1
+           return -1
 
+        return row_id
 
 
     def send_temp_pressure_humidity_outdoor_data(self, temp_pressure_humidity_data):
+        # check for changed Sensor values
+        new_data = {"temperature": temp_pressure_humidity_data["temperature"],
+                    "humidity": temp_pressure_humidity_data["humidity"],
+                    "pressure": temp_pressure_humidity_data["pressure"]}
+        if new_data == self.last_temp_pressure_humidity_data:
+            return -1
+        else:
+            self.last_gps_data = new_data
+
+        # write all changed values to SD Card (SQLITE DB)
+        row_id = self.database_buffer.add_temp_pressure_humidity_data(temp_pressure_humidity_data)
+
+        #Try sending Data via direct Connection
         airpressure_data_api = {'airpressure': {'time': temp_pressure_humidity_data['time'],
                                                 'value': temp_pressure_humidity_data['pressure']}}
 
@@ -62,17 +83,11 @@ class Communication:
 
         temperature_outdoor_data_api = {'temperature_outdoor': {'time': temp_pressure_humidity_data['time'],
                                                                 'value': temp_pressure_humidity_data['temperature']}}
-
-        # check for changed Sensor values
-        # TODO
-
-        # write all changed values to SD Card (SQLITE DB)
-        airpressure_row_id =            self.database_buffer.add_airpressure_data(airpressure_data_api["airpressure"])
-        humidity_outdoor_row_id =       self.database_buffer.add_humidity_outdoor_data(humidity_outdoor_data_api["humidity_outdoor"])
-        temperature_outdoor_row_id =    self.database_buffer.add_temperature_outdoor_data(temperature_outdoor_data_api["temperature_outdoor"])
-
-
         if self.directConnection.status:
             logger.info(self.directConnection.send_airpressure_data         (json.dumps(airpressure_data_api)))
             logger.info(self.directConnection.send_humidity_outdoor_data    (json.dumps(humidity_outdoor_data_api)))
             logger.info(self.directConnection.send_temperature_outdoor_data (json.dumps(temperature_outdoor_data_api)))
+            self.database_buffer.remove_temp_pressure_humidity_data(row_id)
+            return -1
+
+        return row_id

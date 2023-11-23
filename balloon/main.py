@@ -55,9 +55,7 @@ class Main:
             logger.info(self.MPU9050.read_position_data())
             #self.camera.get_image()
 
-            Thread(target=self.Communication.send_gps_data, args=(gps_data,)).start()
-            Thread(target=self.Communication.send_temp_pressure_humidity_outdoor_data,
-                   args=(temp_pressure_humidity_outdoor_data,)).start()
+            Thread(target=self.Communication.send_data, args=(gps_data, temp_pressure_humidity_outdoor_data,)).start()
 
             #sleep so that sensor values are read every 30 seconds
             time_run = (time.time_ns() - time_start) / 1_000_000_000
