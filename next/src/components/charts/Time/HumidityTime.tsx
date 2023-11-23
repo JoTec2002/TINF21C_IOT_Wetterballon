@@ -7,7 +7,7 @@ const HumidityTime = ({humIndoor, humOutdoor}: {humIndoor:ValueObj[], humOutdoor
     let data: any[][] = [["Zeit", "Innen", "Außen"]];
     const options = {
         title: "Luftfeuchtigkeit über Zeit",
-        vAxis: {title: "Luftfeuchtigkeit in g/m^3", minValue: 0},
+        vAxis: {title: "Luftfeuchtigkeit in RH(%)", minValue: 0},
         pointSize: 5
     };
 
