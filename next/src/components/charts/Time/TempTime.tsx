@@ -17,7 +17,7 @@ const TempTime = ({tempIndoor, tempOutdoor}: {tempIndoor:ValueObj[], tempOutdoor
     }
     return (
         (tempIndoor.length === 0 ?
-                <h1 className={"text-red-600"}> Keine Temperatur Daten vorhanden.</h1> :
+                <h1 className={"text-red-600"}> Keine Daten für Temperatur vorhanden.</h1> :
         <Chart
             chartType="LineChart"
             data={data}
