@@ -18,7 +18,7 @@ const HumidityHeightOutside = ({humOutdoor}: {humOutdoor:HeightValueObj[]}) => {
     }
     return (
         (humOutdoor.length === 0 ?
-                <h1 className={"text-red-600"}> Keine Luftfeuchtigkeit Daten vorhanden.</h1> :
+                <h1 className={"text-red-600"}> Keine Daten für Luftfeuchtigkeit vorhanden.</h1> :
                 <Chart
                     chartType="LineChart"
                     data={data}

@@ -17,7 +17,7 @@ const HeightTime = ({locations}: { locations:Gpsdata[] }) => {
     }
     return (
         (locations.length === 0 ?
-                <h1 className={"text-red-600"}> Keine Luftdruck Daten vorhanden.</h1> :
+                <h1 className={"text-red-600"}> Keine Daten für GPS vorhanden.</h1> :
         <Chart
             chartType="LineChart"
             data={data}
