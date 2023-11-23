@@ -29,11 +29,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-       // const body = await req.json()
-
-        if (req.headers.get('flightId') !== null) {
-            const flightId: number = parseInt(String(req.headers.get('flightId')));
-
+        const flightString = String(req.headers.get('flightId'));
+        if (flightString !== null) {
+            const flightId: number = parseInt(flightString);
             const flight = await prisma.flight.update({
                 where: {
                     id: flightId
