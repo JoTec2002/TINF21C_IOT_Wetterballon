@@ -8,7 +8,8 @@ const PressureTime = ({pressures}: { pressures:ValueObj[] }) => {
     let data: any[][] = [["Zeit", "Luftdruck"]];
     const options = {
         title: "Luftdruck über Zeit",
-        vAxis:  {title: "Luftdruck in hPa", minValue: 0},
+        vAxis: {title: "Luftdruck in hPa", minValue: 0, maxValue: 1100},
+        pointSize: 5
     };
 
     for (let i = 0; i < pressures.length; i++) {

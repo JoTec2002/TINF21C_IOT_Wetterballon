@@ -4,10 +4,11 @@ import {parseClockTime} from "@/helpers/DateToString";
 
 const TempTime = ({tempIndoor, tempOutdoor}: {tempIndoor:ValueObj[], tempOutdoor:ValueObj[]}) => {
 
-    let data: any[][] = [["Zeit", "Innerhalb", "Außerhalb"]];
+    let data: any[][] = [["Zeit", "Innen", "Außen"]];
     const options = {
         title: "Temperatur über Zeit",
         vAxis: {title: "Temperatur in °C", minValue: 0},
+        pointSize: 5
     };
 
     for (let i = 0; i < tempIndoor.length; i++) {
