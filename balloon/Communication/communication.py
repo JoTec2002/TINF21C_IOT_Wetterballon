@@ -35,14 +35,14 @@ class Communication:
             #if both gps and temp_pressure_humidity cloudn't send directly
 
             #create new total dict
-            del (gps_data['status'])
-            del (gps_data['tiff'])
+            #del (gps_data['status'])
+            #del (gps_data['tiff'])
             del (gps_data['time'])
             del (temp_pressure_humidity_data['time'])
-            lora_data = gps_data + temp_pressure_humidity_data
+            lora_data = gps_data | temp_pressure_humidity_data
             lora_data_list = list(lora_data.values())
 
-            print(lora_data)
+            print(lora_data_list)
             #send via Lora
             self.loraConnection.send_all_data(lora_data_list)
 

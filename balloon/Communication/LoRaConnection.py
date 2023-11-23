@@ -51,6 +51,7 @@ class LoRaConnection:
         byte_value = (int(value*10000)).to_bytes(3, 'big')
         self.write_data(register, byte_value)
 
+
     def write_floats_data(self, register: int, value: list):
         byte_buffer = []
         for i in value:
