@@ -8,6 +8,7 @@ const HeightTime = ({locations}: { locations:Gpsdata[] }) => {
     const options = {
         title: "Höhe über Zeit",
         vAxis:  {title: "Höhe in m", minValue: 0},
+        pointSize: 5
     };
 
     for (let i = 0; i < locations.length; i++) {

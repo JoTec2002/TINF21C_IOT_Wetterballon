@@ -1,24 +1,29 @@
 import { Chart } from "react-google-charts";
-import {ValueObj} from "@/types/valueObj";
-import {Gpsdata} from "@/types/gpsdata";
+import {HeightValueObj} from "@/types/heightValueObj";
 
-const HumidityHeight = ({heightData, humIndoor, humOutdoor}: {heightData:Gpsdata[], humIndoor:ValueObj[], humOutdoor:ValueObj[]}) => {
+const HumidityHeight = ({humIndoor, humOutdoor}: {humIndoor:HeightValueObj[], humOutdoor:HeightValueObj[]}) => {
 
-    let data: any[][] = [["Zeit", "Hum_Außen", "Hum_Innen"]];
+    let data: any[][] = [["Innen", "Außen", "Höhe"]];
     const options = {
         title: "Luftfeuchtigkeit über Höhe",
-        vAxis: {title: "Luftfeuchtigkeit in g/m^3", minValue: 0},
+        hAxis: {title: "Luftfeuchtigkeit in g/m^3", minValue: 0},
+        vAxis: {title: "Höhe in m", minValue: 0},
+        pointSize: 5,
+        series: {
+            0: { targetAxisIndex: 0 },
+            1: { targetAxisIndex: 0 },
+        }
     };
 
     for (let i = 0; i < humIndoor.length; i++) {
-        let tuple  = [heightData[i].altitude, humIndoor[i].value, humOutdoor[i].value]
+        let tuple  = [humIndoor[i].height, humIndoor[i].value, humOutdoor[i].value]
         data.push(tuple)
     }
     return (
         (humIndoor.length === 0 ?
                 <h1 className={"text-red-600"}> Keine Luftfeuchtigkeit Daten vorhanden.</h1> :
                 <Chart
-                    chartType="LineChart"
+                    chartType="ScatterChart"
                     data={data}
                     height="200px"
                     options={options}

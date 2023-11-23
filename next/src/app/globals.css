@@ -20,7 +20,7 @@
 
 
 body {
-
+  margin: 0 25px 0 25px;
 }
 
 #map {
@@ -28,4 +28,5 @@ body {
   width: 80%;
   margin-left: 10%;
   border: 2px dashed black;
+  z-index: -1;
 }

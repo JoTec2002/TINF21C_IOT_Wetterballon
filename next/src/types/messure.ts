@@ -15,5 +15,5 @@ export type Messure = {
     height_temperature_indoor: HeightValueObj[],
     temperature_outdoor: ValueObj[],
     height_temperature_outdoor: HeightValueObj[],
-    image : ImageObj[],
+    image : ImageObj[]
 }
