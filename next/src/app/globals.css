@@ -27,4 +27,5 @@ body {
   height: 500px;
   width: 80%;
   margin-left: 10%;
+  border: 2px dashed black;
 }
