@@ -6,7 +6,7 @@ const PressureHeight = ({measures}: {measures:HeightValueObj[]}) => {
 
     const options = {
         title: "Luftdruck über Höhe",
-        hAxis: {title: "Luftdruck in hPa", minValue: -500, maxValue: 1000},
+        hAxis: {title: "Luftdruck in hPa", minValue: -500, maxValue: 1500},
         vAxis: {title: "Höhe in m", minValue: 0},
         pointSize: 5,
         legend: "none",
