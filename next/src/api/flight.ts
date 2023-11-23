@@ -14,6 +14,6 @@ export const createFlight = async (balloonId: Number) => {
 }
 
 export const endFlight = async (flightId: Number) => {
-    const res = await axios.post("/api/flight", {headers: {"id": flightId.toString()}})
+    const res = await axios.post("/api/flight", {},{headers: {"flightId": flightId.toString()}})
     return res.status === 200;
 }

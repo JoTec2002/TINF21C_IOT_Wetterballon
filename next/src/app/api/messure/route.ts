@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
             return Response.json({error:'No ballon for apikey found'}, {status : 404});
         }
 
-        const flight = await prisma.flight.findFirst(
+        let flight = await prisma.flight.findFirst(
             {
                 where : {
                     ballonId : balloon!.id,
@@ -89,8 +89,24 @@ export async function POST(req: NextRequest) {
         )
 
         if(flight === null){
-            return Response.json({error:'Not flight found'}, {status : 404});
+             flight = await prisma.flight.create({
+                data: {
+                    ballonId: balloon!.id,
+                    begin:  new Date(),
+                }
+            });
+
+             flight = await prisma.flight.findFirst(
+                {
+                    where : {
+                        ballonId : balloon!.id,
+                        end : null
+                    },
+
+                }
+            )
         }
+
 
         if (body.gpsdata !== undefined) {
             await prisma.gpsdata.create({data: {
