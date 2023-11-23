@@ -43,7 +43,6 @@ class Communication:
             lora_data = gps_data | temp_pressure_humidity_data
             lora_data_list = list(lora_data.values())
 
-            #print(lora_data_list)
             #send via Lora
             logger.info(self.loraConnection.send_all_data(lora_data_list))
 

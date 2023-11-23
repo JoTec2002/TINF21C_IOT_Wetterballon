@@ -47,11 +47,6 @@ class LoRaConnection:
         print(len(byte_value))
         self.write_data(register, byte_value)
 
-    def write_float_data(self, register: int, value: float):
-        byte_value = (int(value*10000)).to_bytes(3, 'big')
-        self.write_data(register, byte_value)
-
-
     def write_floats_data(self, register: int, value: list):
         byte_buffer = []
         for i in value:
@@ -61,12 +56,3 @@ class LoRaConnection:
     def send_all_data(self, data):
         self.write_floats_data(0x20, data)
         pass
-
-
-    def send_gps_data_minified(self, gps_data):
-        gps_data_minified = [gps_data['longitude'], gps_data['latitude'], gps_data['altitude']]
-
-        self.write_floats_data(0x21, gps_data_minified)
-        pass
-
-
