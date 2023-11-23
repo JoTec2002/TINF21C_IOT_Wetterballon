@@ -52,25 +52,6 @@ uint8_t appPort = 2;
 */
 uint8_t confirmedNbTrials = 4;
 
-/* Prepares the payload of the frame */
-static void prepareTxFrame( uint8_t port )
-{
-    /*appData size is LORAWAN_APP_DATA_MAX_SIZE which is defined in "commissioning.h".
-    *appDataSize max value is LORAWAN_APP_DATA_MAX_SIZE.
-    *if enabled AT, don't modify LORAWAN_APP_DATA_MAX_SIZE, it may cause system hanging or failure.
-    *if disabled AT, LORAWAN_APP_DATA_MAX_SIZE can be modified, the max value is reference to lorawan region and SF.
-    *for example, if use REGION_CN470,
-    *the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
-    */
-
-    //TODO: Set appData[] to the Data I Wanna send
-    appDataSize = 4;
-    appData[0] = 0x00;
-    appData[1] = 0x01;
-    appData[2] = 0x02;
-    appData[3] = 0x03;
-}
-
 RTC_DATA_ATTR bool firstrun = true;
 
 int parseValue(const byte data[]){
@@ -93,9 +74,6 @@ void onIicRecive(int iicCount){
     /*  I2C Address Map
      *  0x1.    Range for Data Request
      *  0x2.    Range for Recieve Data
-     *  0x3.    Commands
-     *
-     *  0x21    GPS Data Longitude
      *
      */
     //Serial.print("iicCount: ");
@@ -105,7 +83,7 @@ void onIicRecive(int iicCount){
     Serial.print("CMD: ");
     Serial.println(cmd);
 
-    byte data_bytes[9] = "";
+    byte data_bytes[27] = "";
     for (int i = 0; i < (iicCount-1); i++) {
         data_bytes[i] = Wire1.read();
     }
@@ -122,33 +100,19 @@ void onIicRecive(int iicCount){
             Serial.println("Sleep");
             break;
     }
-
-    if (cmd == 0x21) {
-        Serial.println("Send GPS Data");
-        Serial.print("Longitude: ");
-        Serial.println((data_bytes[2] + (data_bytes[1] << 8) + (data_bytes[0] << 16)));
-        Serial.print("Latitude: ");
-        Serial.println((data_bytes[5] + (data_bytes[4] << 8) + (data_bytes[3] << 16)));
-        Serial.print("Altitude: ");
-        Serial.println((data_bytes[8] + (data_bytes[1] << 7) + (data_bytes[6] << 16)));
-
-        //Prepare TTN Send Data
-        appDataSize = 10;
-        appData[0] = 0x01;  // Byte to Signal Data Type
-        appData[1] = data_bytes[0];  // Latitude
-        appData[2] = data_bytes[1];
-        appData[3] = data_bytes[2];
-        appData[4] = data_bytes[3];  // Longitude
-        appData[5] = data_bytes[4];
-        appData[6] = data_bytes[5];
-        appData[7] = data_bytes[6];  // Altitude
-        appData[8] = data_bytes[7];
-        appData[9] = data_bytes[8];
-
-        if (CustomDeviceState == SLEEP){
-            CustomDeviceState = SEND;
-            deviceState = DEVICE_STATE_SEND;
+    if (cmd == 0x20 && CustomDeviceState == SLEEP){
+        Serial.println("Sending Data");
+        appDataSize = 27;
+        for (int i = 0; i < 27; i++) {
+            appData[i] = data_bytes[i];
         }
+
+        CustomDeviceState = SEND;
+        deviceState = DEVICE_STATE_SEND;
+
+        return;
+    } else{
+        Serial.println("LoRa is not sleeping");
     }
 }
 
