@@ -24,6 +24,7 @@ class Communication:
 
     def send_data(self, gps_data, temp_pressure_humidity_data):
         return_gps = self.send_gps_data(gps_data)
+        logger.info(return_gps)
         return_temp_pressure_humidity = self.send_temp_pressure_humidity_outdoor_data(temp_pressure_humidity_data)
 
         if return_gps == -2 or return_temp_pressure_humidity == -2:
@@ -42,9 +43,9 @@ class Communication:
             lora_data = gps_data | temp_pressure_humidity_data
             lora_data_list = list(lora_data.values())
 
-            print(lora_data_list)
+            #print(lora_data_list)
             #send via Lora
-            self.loraConnection.send_all_data(lora_data_list)
+            logger.info(self.loraConnection.send_all_data(lora_data_list))
 
             #TODO Flag in DB as send via LoRa
             pass

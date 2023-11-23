@@ -137,9 +137,9 @@ class Gps:
             return False
 
         ret_array["tiff"] =             location_array[5]
-        ret_array["satellites"] =       location_array[6]
-        ret_array["speed"] =            location_array[7]
-        ret_array["course"] =           location_array[8]
+        ret_array["satellites"] =       int(location_array[6])
+        ret_array["speed"] =            float(location_array[7])
+        ret_array["course"] =           float(location_array[8])
         ret_array["altitude"] =         float(location_array[3])
 
         if not location_array[1] == '0.000000':
