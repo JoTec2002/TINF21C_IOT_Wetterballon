@@ -11,12 +11,23 @@ const HumidityTime = ({humIndoor, humOutdoor}: {humIndoor:ValueObj[], humOutdoor
         pointSize: 5
     };
 
-    for (let i = 0; i < humIndoor.length; i++) {
-        let tuple  = [parseClockTime(new Date(humIndoor[i].time)), humIndoor[i].value, humOutdoor[i].value]
+    let array = humIndoor.length > humOutdoor.length ? humIndoor : humOutdoor;
+    let tuple: any[];
+    for (let i = 0; i < array.length; i++) {
+        if (humIndoor[i] == undefined) {
+            tuple  = [parseClockTime(new Date(array[i].time)), NaN, humOutdoor[i].value]
+        }
+        else if (humOutdoor[i] == undefined) {
+            tuple  = [parseClockTime(new Date(array[i].time)), humIndoor[i].value, NaN]
+        }
+        else {
+            tuple  = [parseClockTime(new Date(array[i].time)), humIndoor[i].value, humOutdoor[i].value]
+        }
         data.push(tuple)
     }
+
     return (
-        (humIndoor.length === 0 ?
+        (array.length === 0 ?
                 <h1 className={"text-red-600"}> Keine Daten für Luftfeuchtigkeit vorhanden.</h1> :
         <Chart
             chartType="LineChart"
