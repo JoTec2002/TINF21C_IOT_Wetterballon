@@ -12,6 +12,7 @@ while (time.time() - t0) < 5:  # wait for 5-sec to connect to IMU
     except:
         continue
 
+
 class MPU9050:
     def __init__(self):
         if not start_bool:  # make sure the IMU was started
@@ -22,9 +23,9 @@ class MPU9050:
             ax, ay, az, wx, wy, wz = mpu6050_conv()  # read and convert mpu6050 data
             mx, my, mz = AK8963_conv()  # read and convert AK8963 magnetometer data
 
-            return {"accel": [ax, ay, az], "gyro":[wx, wy, wz], "magnet":[mx, my, mz]}
+            return {"accel": [ax, ay, az], "gyro": [wx, wy, wz], "magnet": [mx, my, mz]}
         except Exception as e:
-            print (e)
+            print(e)
             pass
-        #Exception("failed to read data")
+        # Exception("failed to read data")
         return False
