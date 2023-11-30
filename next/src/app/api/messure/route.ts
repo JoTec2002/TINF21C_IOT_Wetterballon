@@ -1,18 +1,34 @@
 import {prisma} from "@/db/db";
 import {Messure} from "@/types/messure";
 import {NextRequest} from "next/server";
+import {ValueObj} from "@/types/valueObj";
+import {HeightValueObj} from "@/types/heightValueObj";
+import {Gpsdata} from "@/types/gpsdata";
+import {it} from "node:test";
 
 export async function GET(req: NextRequest) {
     try {
         const flightid = parseInt(String(req.headers.get("flightid")));
 
+        const gps = await prisma.gpsdata.findMany({where : { flightId : flightid}})
+        const airpressure = await prisma.airpressure.findMany({where : { flightId : flightid}})
+        const temp_indoor = await prisma.temperatureIndoor.findMany({where : { flightId : flightid}})
+        const temp_outdoor = await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}})
+        const hum_indoor = await prisma.humidityIndoor.findMany({where : { flightId : flightid}})
+        const hum_outdoor = await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}})
+
         const data : Messure = {
-            gpsdata : await prisma.gpsdata.findMany({where : { flightId : flightid}}),
-            airpressure : await prisma.airpressure.findMany({where : { flightId : flightid}}),
-            temperature_indoor : await prisma.temperatureIndoor.findMany({where : { flightId : flightid}}),
-            temperature_outdoor : await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}}),
-            humidity_indoor : await prisma.humidityIndoor.findMany({where : { flightId : flightid}}),
-            humidity_outdoor : await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}}),
+            gpsdata : gps,
+            airpressure : airpressure,
+            height_airpressure : MatchOnHeight(airpressure, gps),
+            temperature_indoor : temp_indoor,
+            height_temperature_indoor : MatchOnHeight(temp_indoor, gps),
+            temperature_outdoor : temp_outdoor,
+            height_temperature_outdoor : MatchOnHeight(temp_outdoor, gps),
+            humidity_indoor :  hum_indoor,
+            height_humidity_indoor : MatchOnHeight(hum_indoor, gps),
+            humidity_outdoor : hum_outdoor,
+            height_humidity_outdoor : MatchOnHeight(hum_outdoor, gps),
             image : await prisma.image.findMany({where: {flightId : flightid}, select : {id: true, time : true, source : true}})
         }
         return Response.json(data)
@@ -22,6 +38,24 @@ export async function GET(req: NextRequest) {
     }
 }
 
+function MatchOnHeight(value : ValueObj[], gps : Gpsdata[]) : HeightValueObj[] {
+    const ret : HeightValueObj[] = [];
+
+    gps.map((item) => {
+        const t1 =new Date(item.time)
+        const find = value.find((v) => {
+            const t2 = new Date(v.time)
+            return (t1.getDate() == t2.getDate() && t1.getHours() == t2.getHours() && t1.getMinutes() == t2.getMinutes())
+        })
+
+        if(find !== undefined){
+            ret.push({time : item.time, source: '', height : item.altitude, value : find.value})
+        }
+    })
+
+
+    return ret;
+}
 
 export async function POST(req: NextRequest) {
     try {
@@ -44,7 +78,7 @@ export async function POST(req: NextRequest) {
             return Response.json({error:'No ballon for apikey found'}, {status : 404});
         }
 
-        const flight = await prisma.flight.findFirst(
+        let flight = await prisma.flight.findFirst(
             {
                 where : {
                     ballonId : balloon!.id,
@@ -55,8 +89,24 @@ export async function POST(req: NextRequest) {
         )
 
         if(flight === null){
-            return Response.json({error:'Not flight found'}, {status : 404});
+             flight = await prisma.flight.create({
+                data: {
+                    ballonId: balloon!.id,
+                    begin:  new Date(),
+                }
+            });
+
+             flight = await prisma.flight.findFirst(
+                {
+                    where : {
+                        ballonId : balloon!.id,
+                        end : null
+                    },
+
+                }
+            )
         }
+
 
         if (body.gpsdata !== undefined) {
             await prisma.gpsdata.create({data: {
