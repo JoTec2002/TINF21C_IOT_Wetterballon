@@ -11,12 +11,24 @@ const TempTime = ({tempIndoor, tempOutdoor}: {tempIndoor:ValueObj[], tempOutdoor
         pointSize: 5
     };
 
-    for (let i = 0; i < tempIndoor.length; i++) {
-        let tuple  = [parseClockTime(new Date(tempIndoor[i].time)), tempIndoor[i].value, tempOutdoor[i].value]
+    let array = tempIndoor.length > tempOutdoor.length ? tempIndoor : tempOutdoor;
+    let tuple: any[];
+    for (let i = 0; i < array.length; i++) {
+
+        if (tempIndoor[i] == undefined) {
+            tuple  = [parseClockTime(new Date(array[i].time)), NaN, tempOutdoor[i].value]
+        }
+        else if (tempOutdoor[i] == undefined) {
+            tuple  = [parseClockTime(new Date(array[i].time)), tempIndoor[i].value, NaN]
+        }
+        else {
+            tuple  = [parseClockTime(new Date(array[i].time)), tempIndoor[i].value, tempOutdoor[i].value]
+        }
+
         data.push(tuple)
     }
     return (
-        (tempIndoor.length === 0 ?
+        (array.length === 0 ?
                 <h1 className={"text-red-600"}> Keine Daten für Temperatur vorhanden.</h1> :
         <Chart
             chartType="LineChart"

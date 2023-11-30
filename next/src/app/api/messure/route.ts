@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
         const temp_indoor = await prisma.temperatureIndoor.findMany({where : { flightId : flightid}})
         const temp_outdoor = await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}})
         const hum_indoor = await prisma.humidityIndoor.findMany({where : { flightId : flightid}})
-        const hum_outdoor = await prisma.temperatureOutdoor.findMany({where : { flightId : flightid}})
+        const hum_outdoor = await prisma.humidityOutdoor.findMany({where : { flightId : flightid}})
 
         const data : Messure = {
             gpsdata : gps,
