@@ -21,28 +21,29 @@ from MPU9050.mpu9050 import MPU9050
 
 class Main:
     def __init__(self):
-        #I2C Bus
+        # I2C Bus
         port = 1
         bus = smbus2.SMBus(port)
 
         logger.add("Logs.log")
 
+        self.Communication = Communication(bus)
+        logger.info("Communication init successful")
+
         self.GPS = Gps()
         logger.info("GPS init successful")
 
-        #BME280
-        self.BME280 = Mbme280(bus, address = 0x76)
+        # BME280
+        self.BME280 = Mbme280(bus, address=0x76)
         logger.info("BME280 init successful")
 
-        #MPU 9050
+        # MPU 9050
         self.MPU9050 = MPU9050()
         logger.info("MPU9050 init successful")
 
-        #Camera
-        self.camera = Camera()
+        # Camera
+        self.camera = Camera(communication=self.Communication)
         logger.info("Camera init successful")
-
-        self.Communication = Communication(bus)
 
     def loop(self):
         while True:
@@ -53,16 +54,17 @@ class Main:
             logger.info(gps_data)
             logger.info(temp_pressure_humidity_outdoor_data)
             logger.info(self.MPU9050.read_position_data())
-            #self.camera.get_image()
+            # self.camera.get_image()
 
             Thread(target=self.Communication.send_data, args=(gps_data, temp_pressure_humidity_outdoor_data,)).start()
 
-            #sleep so that sensor values are read every 30 seconds
+            # sleep so that sensor values are read every 30 seconds
             time_run = (time.time_ns() - time_start) / 1_000_000_000
-            time_to_sleep = 20-time_run
+            time_to_sleep = 20 - time_run
             print(time_to_sleep)
             if time_to_sleep > 0:
                 time.sleep(time_to_sleep)
+
 
 if __name__ == "__main__":
     print("Start")
@@ -73,4 +75,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("End")
-
