@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `gpsdata` (
   `course` double NOT NULL,
   `altitude` double NOT NULL,
   `longitude` double NOT NULL,
-  `latitude` double NOT NULL,
+  `latitude` double NOT NULL
 )"""
 
 __SQL_CREATE_TEMP_PRESSURE_HUMIDITY_TABLE__ = """

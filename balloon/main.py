@@ -51,14 +51,14 @@ class Main:
             # get all sensor values
             gps_data = self.GPS.read_location()
             temp_pressure_humidity_outdoor_data = self.BME280.read_temp_pressure_humidity()
+            rotation_data = self.MPU9050.last_euler_axis.tolist()
             logger.info(gps_data)
             logger.info(temp_pressure_humidity_outdoor_data)
-            logger.info(self.MPU9050.read_position_data())
-            # self.camera.get_image()
+            logger.info(rotation_data)
 
             Thread(target=self.Communication.send_data, args=(gps_data, temp_pressure_humidity_outdoor_data,)).start()
 
-            # sleep so that sensor values are read every 30 seconds
+            # sleep so that sensor values are read every 20 seconds
             time_run = (time.time_ns() - time_start) / 1_000_000_000
             time_to_sleep = 20 - time_run
             print(time_to_sleep)

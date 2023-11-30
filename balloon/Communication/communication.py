@@ -25,7 +25,7 @@ class Communication:
 
     def send_data(self, gps_data, temp_pressure_humidity_data):
         return_gps = self.send_gps_data(gps_data)
-        logger.info("GPS send return" + return_gps)
+        logger.info("GPS send return" + str(return_gps))
         return_temp_pressure_humidity = self.send_temp_pressure_humidity_outdoor_data(temp_pressure_humidity_data)
 
         if return_gps == -2 or return_temp_pressure_humidity == -2:
