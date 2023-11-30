@@ -113,9 +113,6 @@ class Communication:
         return row_id
 
     def send_picture(self, picturepath):
-        print("Sending Picture")
-        logger.info("Sending Picture")
-        logger.info(picturepath)
         img_binary = open(picturepath, 'rb')
         img_base64_bytes = base64.b64encode(img_binary.read())
         img_base64_string = img_base64_bytes.decode("ascii")
