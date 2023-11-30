@@ -44,7 +44,7 @@ const Imageview = ({images}: { images: ImageObj[] }) => {
                     ))
                 }
             </li>
-            <Modal show={isVisible} onClose={() => setIsVisible(false)}>
+            <Modal show={isVisible} onClose={() => {setIsVisible(false); setImageId(0)}}>
                 <Modal.Header>Bild:</Modal.Header>
                 <Modal.Body>
                     <img
