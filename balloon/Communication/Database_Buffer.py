@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS `gpsdata` (
   `altitude` double NOT NULL,
   `longitude` double NOT NULL,
   `latitude` double NOT NULL,
-  `send_state` int(1) DEFAULT 0 NOT NULL
 )"""
 
 __SQL_CREATE_TEMP_PRESSURE_HUMIDITY_TABLE__ = """
@@ -24,14 +23,12 @@ CREATE TABLE IF NOT EXISTS `temp_pressure_humidity` (
   `airpressure` double NOT NULL
 )"""
 
-
 __SQL_INSERT_GPS_ROW__ = """INSERT INTO `gpsdata` (
         `time`, `satellites`, `speed`, `course`, `altitude`, `longitude`, `latitude`)
          VALUES (:time, :satellites, :speed, :course, :altitude, :longitude, :latitude);"""
 
 __SQL_INSERT_TEMP_PRESSURE_HUMIDITY_ROW__ = """INSERT INTO `temp_pressure_humidity` (
     `time`, `temperature`, `humidity`,  `airpressure`) VALUES (:time, :temperature, :humidity, :pressure);"""
-
 
 __SQL_DELETE_GPS_ROW__ = """DELETE FROM `gpsdata` WHERE `id`=?"""
 
@@ -48,7 +45,7 @@ class DatabaseBuffer:
         except Error as e:
             logger.error(e)
 
-        #create needed tables
+        # create needed tables
         self.create_table(__SQL_CREATE_GPS_TABLE__)
         self.create_table(__SQL_CREATE_TEMP_PRESSURE_HUMIDITY_TABLE__)
 
@@ -64,6 +61,7 @@ class DatabaseBuffer:
             c.execute(create_table_sql)
         except Error as e:
             logger.error(e)
+
     pass
 
     def db_sql_operation(self, insert_row_sql: str, data):
@@ -73,19 +71,16 @@ class DatabaseBuffer:
         cursor.close()
         return lastrowid
 
-    #GPS
+    # GPS
     def add_gps_data(self, data):
         return self.db_sql_operation(__SQL_INSERT_GPS_ROW__, data)
-    def remove_gps_data(self, row_id):
-        return self.db_sql_operation(__SQL_DELETE_GPS_ROW__, (row_id, ))
 
-    #temp_pressure_humidity (BME 280)
+    def remove_gps_data(self, row_id):
+        return self.db_sql_operation(__SQL_DELETE_GPS_ROW__, (row_id,))
+
+    # temp_pressure_humidity (BME 280)
     def add_temp_pressure_humidity_data(self, data):
         return self.db_sql_operation(__SQL_INSERT_TEMP_PRESSURE_HUMIDITY_ROW__, data)
+
     def remove_temp_pressure_humidity_data(self, row_id):
-        return self.db_sql_operation(__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_ROW__, (row_id, ))
-
-
-    def update_lorasend_gps(self, row_id):
-        return False
-
+        return self.db_sql_operation(__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_ROW__, (row_id,))

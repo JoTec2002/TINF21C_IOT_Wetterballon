@@ -25,12 +25,12 @@ class Communication:
 
     def send_data(self, gps_data, temp_pressure_humidity_data):
         return_gps = self.send_gps_data(gps_data)
-        logger.info(return_gps)
+        logger.info("GPS send return" + return_gps)
         return_temp_pressure_humidity = self.send_temp_pressure_humidity_outdoor_data(temp_pressure_humidity_data)
 
         if return_gps == -2 or return_temp_pressure_humidity == -2:
             # on -2 return data should not be send via LoRa
-            print("return")
+            # print("return")
             return
 
         if return_gps > 0 and return_temp_pressure_humidity > 0:
@@ -47,8 +47,9 @@ class Communication:
             # send via Lora
             logger.info(self.loraConnection.send_all_data(lora_data_list))
 
-            # TODO Flag in DB as send via LoRa
-            pass
+            # remove sent data from local Database Buffer
+            self.database_buffer.remove_gps_data(return_gps)
+            self.database_buffer.remove_temp_pressure_humidity_data(return_temp_pressure_humidity)
 
     def send_gps_data(self, gps_data):
         # check if GPS Data status is 3D Fixed - just than save Datapoint
