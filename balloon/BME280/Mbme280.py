@@ -14,4 +14,7 @@ class Mbme280:
     def read_temp_pressure_humidity(self):
         data = bme280.sample(self.bus, self.address, self.calibration_params)
 
-        return {"time": data.timestamp.isoformat(), "temperature": data.temperature, "pressure": data.pressure, "humidity": data.humidity}
+        return {"time": data.timestamp.isoformat(),
+                "temperature": data.temperature,
+                "pressure": data.pressure,
+                "humidity": data.humidity}
