@@ -62,8 +62,11 @@ class Communication:
             del (gps_data['satellites'])
             del (temp_pressure_humidity_outdoor_data['time'])
             del (temp_humidity_indoor_data['time'])
-            lora_data = gps_data | temp_pressure_humidity_outdoor_data | temp_humidity_indoor_data
+            lora_data = gps_data | temp_pressure_humidity_outdoor_data
+            lora_data["temperature_indoor"] = temp_humidity_indoor_data["temperature"]
+            lora_data["humidity_indoor"] = temp_humidity_indoor_data["humidity"]
             lora_data_list = list(lora_data.values())
+            print(lora_data)
 
             self.loraConnection.update_status()
             #send via Lora if LoRa Module is sleeping
@@ -71,9 +74,13 @@ class Communication:
                 return
             self.loraConnection.send_all_data(lora_data_list)
 
-            while self.loraConnection.LoRa_status != 0x03:
+            self.loraConnection.update_status()
+            while not self.loraConnection.LoRa_status == 0x03:
                 time.sleep(1)
                 self.loraConnection.update_status()
+                print(1)
+
+            logger.info("send via lora successfully")
 
             # remove sent data from local Database Buffer
             self.database_buffer.remove_gps_data(return_gps)
@@ -103,8 +110,11 @@ class Communication:
         gps_data_api = {'gpsdata': gps_data}
         gps_data_json = json.dumps(gps_data_api)
 
+        return_gps = False
         if self.directConnection.status:
-            self.directConnection.send_gps_data(gps_data_json)
+            return_gps = self.directConnection.send_gps_data(gps_data_json)
+
+        if return_gps:
             self.database_buffer.remove_gps_data(row_id)
             return -1
 
