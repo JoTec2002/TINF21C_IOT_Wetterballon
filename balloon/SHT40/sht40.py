@@ -116,7 +116,7 @@ class SHT4x:
 
     def update_and_read(self):
         self.update()
-        return {"time": datetime.now().isoformat(),
+        return {"time": datetime.utcnow().isoformat(timespec="seconds"),
                 "temperature": self.temperature,
                 "humidity": self.humidity}
 

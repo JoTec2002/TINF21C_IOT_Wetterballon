@@ -42,6 +42,7 @@ class Main:
         self.SHT40 = SHT4x()
         self.SHT40.reset()
         self.SHT40.mode = "high"
+        logger.info("SMT40 init successful")
 
         # MPU 9050
         self.MPU9050 = MPU9050()
@@ -65,7 +66,7 @@ class Main:
             logger.info(temp_humidity_indoor_data)
             logger.info(rotation_data)
 
-            Thread(target=self.Communication.send_data, args=(gps_data, temp_pressure_humidity_outdoor_data, temp_humidity_indoor_data)).start()
+            Thread(target=self.Communication.send_data, args=(gps_data, temp_pressure_humidity_outdoor_data, temp_humidity_indoor_data, )).start()
 
             # sleep so that sensor values are read every 20 seconds
             time_run = (time.time_ns() - time_start) / 1_000_000_000

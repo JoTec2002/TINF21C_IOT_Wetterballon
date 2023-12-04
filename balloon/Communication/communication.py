@@ -39,9 +39,13 @@ class Communication:
             - -1 -> send via direct connection
             - >=0 -> could be send -> SQLite row_id
         """
+        logger.info("begin send")
         return_gps = self.send_gps_data(gps_data)
         return_temp_pressure_humidity_outdoor = self.send_temp_pressure_humidity_outdoor_data(temp_pressure_humidity_outdoor_data)
         return_temp_humidity_indoor = self.send_temp_humidity_indoor_data(temp_humidity_indoor_data)
+        logger.info("GPS: "+str(return_gps))
+        logger.info("temp_pressure_humidity_outdoor: "+str(return_temp_pressure_humidity_outdoor))
+        logger.info("temp_humidity_indoor: "+str(return_temp_humidity_indoor))
 
         if return_gps == -2 or return_temp_pressure_humidity_outdoor == -2 or return_temp_humidity_indoor == -2:
             # on -2 return data should not be send via LoRa

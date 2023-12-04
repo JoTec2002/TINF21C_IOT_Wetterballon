@@ -36,7 +36,7 @@ class DirectConnection:
 
     def send_data(self, data):
         try:
-            res = requests.post(url=__BASE_URL__+__APP_URL__, data=data, headers={'apikey': __API_KEY__})
+            res = requests.post(url=__BASE_URL__+__APP_URL__, data=data, headers={'apikey': __API_KEY__}, timeout=15)
             if res.status_code == 200:
                 self.status = True
                 return True

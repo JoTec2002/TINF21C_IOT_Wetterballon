@@ -43,7 +43,7 @@ __SQL_INSERT_TEMP_HUMIDITY_INDOOR_ROW__ = """INSERT INTO `temp_humidity_indoor` 
 
 __SQL_DELETE_GPS_ROW__ = """DELETE FROM `gpsdata` WHERE `id`=?"""
 
-__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_OUTDOOR_ROW__ = """DELETE FROM `temp_pressure_humidity` WHERE `id`=?"""
+__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_OUTDOOR_ROW__ = """DELETE FROM `temp_pressure_humidity_outdoor` WHERE `id`=?"""
 
 __SQL_DELETE_TEMP_HUMIDITY_INDOOR_ROW__ = """DELETE FROM `temp_humidity_indoor` WHERE `id`=?"""
 
