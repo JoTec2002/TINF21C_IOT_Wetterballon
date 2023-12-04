@@ -1,9 +1,8 @@
 import {ImageObj} from "@/types/image";
 import {getImage} from "@/api/image";
 import {useEffect, useState} from "react";
+import {Modal} from "flowbite-react";
 import Image from "next/image";
-import {createBallon, getBalloons} from "@/api/balloon";
-import {Button, Label, Modal, TextInput} from "flowbite-react";
 
 
 const Imageview = ({images}: { images: ImageObj[] }) => {
@@ -23,7 +22,7 @@ const Imageview = ({images}: { images: ImageObj[] }) => {
             {
                 const imageData = await getImage(imageId)
                 if(imageData !== null){
-                    setImageBase64(imageData.base64Image === null ? '': imageData.base64Image.toString());
+                    setImageBase64(imageData.base64Image === undefined ? '': imageData.base64Image.toString());
                     setIsVisible(true);
                 }
             }
@@ -47,7 +46,7 @@ const Imageview = ({images}: { images: ImageObj[] }) => {
             <Modal show={isVisible} onClose={() => {setIsVisible(false); setImageId(0)}}>
                 <Modal.Header>Bild:</Modal.Header>
                 <Modal.Body>
-                    <img
+                    <Image
                         src={`data:image/jpeg;base64,${imageBase64}`}
                         alt={"Image from RaspberryPi Camera"}
                         width={500}
