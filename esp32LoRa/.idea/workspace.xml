@@ -20,7 +20,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="82d299fb-e46b-4eda-bf3b-68d30e660711" name="Changes" comment="" />
+    <list default="true" id="82d299fb-e46b-4eda-bf3b-68d30e660711" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -91,7 +94,7 @@
     "cf.advertisement.text.has.clang-format": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "33-enhance-raspi",
     "last_opened_file_path": "C:/GitClones/TINF21C_IOT_Wetterballon/esp32LoRa",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -119,7 +122,7 @@
       <option name="presentableId" value="Default" />
       <updated>1698937788100</updated>
       <workItem from="1698937789110" duration="748000" />
-      <workItem from="1701717909422" duration="5000" />
+      <workItem from="1701717909422" duration="1374000" />
     </task>
     <servers />
   </component>

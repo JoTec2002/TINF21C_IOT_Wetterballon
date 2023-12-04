@@ -83,7 +83,7 @@ void onIicRecive(int iicCount){
     Serial.print("CMD: ");
     Serial.println(cmd);
 
-    byte data_bytes[27] = "";
+    byte data_bytes[30] = "";
     for (int i = 0; i < (iicCount-1); i++) {
         data_bytes[i] = Wire1.read();
     }
