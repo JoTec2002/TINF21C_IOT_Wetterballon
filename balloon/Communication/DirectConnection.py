@@ -62,5 +62,11 @@ class DirectConnection:
     def send_temperature_outdoor_data(self, temperature_outdoor_data):
         return self.send_data(temperature_outdoor_data)
 
+    def send_humidity_indoor_data(self, humidity_indoor_data):
+        return self.send_data(humidity_indoor_data)
+
+    def send_temperature_indoor_data(self, temperature_indoor_data):
+        return self.send_data(temperature_indoor_data)
+
     def send_base64_picture_data(self, base64_picture):
         return self.send_data(base64_picture)
