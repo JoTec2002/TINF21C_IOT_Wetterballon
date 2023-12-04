@@ -102,8 +102,8 @@ void onIicRecive(int iicCount){
     }
     if (cmd == 0x20 && CustomDeviceState == SLEEP){
         Serial.println("Sending Data");
-        appDataSize = 27;
-        for (int i = 0; i < 27; i++) {
+        appDataSize = 30;
+        for (int i = 0; i < appDataSize; i++) {
             appData[i] = data_bytes[i];
         }
 
