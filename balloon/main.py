@@ -17,6 +17,7 @@ from Camera.camera import Camera
 from Communication.communication import Communication
 from GPS.gps import Gps
 from MPU9050.mpu9050 import MPU9050
+from SHT40.sht40 import SHT4x
 
 
 class Main:
@@ -37,6 +38,11 @@ class Main:
         self.BME280 = Mbme280(bus, address=0x76)
         logger.info("BME280 init successful")
 
+        #SMT40
+        self.SHT40 = SHT4x()
+        self.SHT40.reset()
+        self.SHT40.mode = "high"
+
         # MPU 9050
         self.MPU9050 = MPU9050()
         logger.info("MPU9050 init successful")
@@ -51,9 +57,12 @@ class Main:
             # get all sensor values
             gps_data = self.GPS.read_location()
             temp_pressure_humidity_outdoor_data = self.BME280.read_temp_pressure_humidity()
+            temp_humidity_indoor_data = self.SHT40.update_and_read()
             rotation_data = self.MPU9050.last_euler_axis.tolist()
+
             logger.info(gps_data)
             logger.info(temp_pressure_humidity_outdoor_data)
+            logger.info(temp_humidity_indoor_data)
             logger.info(rotation_data)
 
             Thread(target=self.Communication.send_data, args=(gps_data, temp_pressure_humidity_outdoor_data,)).start()
