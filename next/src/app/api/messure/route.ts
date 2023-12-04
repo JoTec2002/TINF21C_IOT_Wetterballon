@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
             height_humidity_indoor : MatchOnHeight(hum_indoor, gps),
             humidity_outdoor : hum_outdoor,
             height_humidity_outdoor : MatchOnHeight(hum_outdoor, gps),
-            image : await prisma.image.findMany({where: {flightId : flightid}, select : {id: true, time : true, source : true}})
+            image : await prisma.image.findMany({where: {flightId : flightid}, select : {id: true, time : true, source : true, base64Image: false}})
         }
         return Response.json(data)
     } catch (error) {
