@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS `gpsdata` (
   `latitude` double NOT NULL
 )"""
 
-__SQL_CREATE_TEMP_PRESSURE_HUMIDITY_TABLE__ = """
-CREATE TABLE IF NOT EXISTS `temp_pressure_humidity` (
+__SQL_CREATE_TEMP_PRESSURE_HUMIDITY_OUTDOOR_TABLE__ = """
+CREATE TABLE IF NOT EXISTS `temp_pressure_humidity_outdoor` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   `time` datetime(3) NOT NULL,
   `temperature` double NOT NULL,
@@ -27,12 +27,12 @@ __SQL_INSERT_GPS_ROW__ = """INSERT INTO `gpsdata` (
         `time`, `satellites`, `speed`, `course`, `altitude`, `longitude`, `latitude`)
          VALUES (:time, :satellites, :speed, :course, :altitude, :longitude, :latitude);"""
 
-__SQL_INSERT_TEMP_PRESSURE_HUMIDITY_ROW__ = """INSERT INTO `temp_pressure_humidity` (
+__SQL_INSERT_TEMP_PRESSURE_HUMIDITY_OUTDOOR_ROW__ = """INSERT INTO `temp_pressure_humidity_outdoor` (
     `time`, `temperature`, `humidity`,  `airpressure`) VALUES (:time, :temperature, :humidity, :pressure);"""
 
 __SQL_DELETE_GPS_ROW__ = """DELETE FROM `gpsdata` WHERE `id`=?"""
 
-__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_ROW__ = """DELETE FROM `temp_pressure_humidity` WHERE `id`=?"""
+__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_OUTDOOR_ROW__ = """DELETE FROM `temp_pressure_humidity` WHERE `id`=?"""
 
 
 class DatabaseBuffer:
@@ -47,7 +47,7 @@ class DatabaseBuffer:
 
         # create needed tables
         self.create_table(__SQL_CREATE_GPS_TABLE__)
-        self.create_table(__SQL_CREATE_TEMP_PRESSURE_HUMIDITY_TABLE__)
+        self.create_table(__SQL_CREATE_TEMP_PRESSURE_HUMIDITY_OUTDOOR_TABLE__)
 
         logger.info("Database Buffer init successful")
 
@@ -79,8 +79,8 @@ class DatabaseBuffer:
         return self.db_sql_operation(__SQL_DELETE_GPS_ROW__, (row_id,))
 
     # temp_pressure_humidity (BME 280)
-    def add_temp_pressure_humidity_data(self, data):
-        return self.db_sql_operation(__SQL_INSERT_TEMP_PRESSURE_HUMIDITY_ROW__, data)
+    def add_temp_pressure_humidity_outdoor_data(self, data):
+        return self.db_sql_operation(__SQL_INSERT_TEMP_PRESSURE_HUMIDITY_OUTDOOR_ROW__, data)
 
-    def remove_temp_pressure_humidity_data(self, row_id):
-        return self.db_sql_operation(__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_ROW__, (row_id,))
+    def remove_temp_pressure_humidity_outdoor_data(self, row_id):
+        return self.db_sql_operation(__SQL_DELETE_TEMP_PRESSURE_HUMIDITY_OUTDOOR_ROW__, (row_id,))
