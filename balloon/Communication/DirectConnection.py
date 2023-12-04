@@ -36,7 +36,7 @@ class DirectConnection:
 
     def send_data(self, data):
         try:
-            res = requests.post(url=__BASE_URL__+__APP_URL__, data=data, headers={'apikey': __API_KEY__})
+            res = requests.post(url=__BASE_URL__+__APP_URL__, data=data, headers={'apikey': __API_KEY__}, timeout=15)
             if res.status_code == 200:
                 self.status = True
                 return True
@@ -61,3 +61,12 @@ class DirectConnection:
 
     def send_temperature_outdoor_data(self, temperature_outdoor_data):
         return self.send_data(temperature_outdoor_data)
+
+    def send_humidity_indoor_data(self, humidity_indoor_data):
+        return self.send_data(humidity_indoor_data)
+
+    def send_temperature_indoor_data(self, temperature_indoor_data):
+        return self.send_data(temperature_indoor_data)
+
+    def send_base64_picture_data(self, base64_picture):
+        return self.send_data(base64_picture)

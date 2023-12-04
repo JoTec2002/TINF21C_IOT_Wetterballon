@@ -13,16 +13,18 @@ def string_to_bytes(val):
 class LoRaConnection:
     def __init__(self, bus: SMBus):
         self.bus = bus
-        self.LoRa_status = 0
-        #self.write_string_data(0x00, "Hello")
+        self.LoRa_status = 0 # 0: unknown, 1: Joining, 2: Sending, 3: sleeping
+        self.status = False
+        self.update_status()
+
+    def update_status(self):
         try:
-            self.LoRa_status = bus.read_byte_data(__ESP_Address__, 0x00)
+            self.LoRa_status = self.bus.read_byte_data(__ESP_Address__, 0x00)
             self.status = True
         except OSError:
             logger.warning("LoRa Module not reachable")
             self.status = False
             self.LoRa_status = 0
-
 
     def write_data(self, register, byte_buffer):
         #read current LoraDevice State
@@ -55,4 +57,3 @@ class LoRaConnection:
 
     def send_all_data(self, data):
         self.write_floats_data(0x20, data)
-        pass

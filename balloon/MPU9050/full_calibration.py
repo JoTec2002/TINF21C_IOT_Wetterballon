@@ -286,7 +286,7 @@ if __name__ == '__main__':
         cal_labels = [['a_x','m','b'],['a_y','m','b'],['a_z','m','b'],'w_x','w_y','w_z',
                       ['m_x','m_x0'],['m_y','m_y0'],['m_z','m_z0']]
         mag_cal_axes = ['z','y','x'] # axis order being rotated for mag cal
-        cal_filename = '/home/iot/code/MPU9050/mpu9250_cal_params.csv' # filename for saving calib coeffs
+        cal_filename = 'mpu9250_cal_params.csv' # filename for saving calib coeffs
         cal_size = 200 # how many points to use for calibration averages
         cal_offsets = np.array([[],[],[],0.0,0.0,0.0,[],[],[]], dtype="object") # cal vector
         #
@@ -337,6 +337,7 @@ if __name__ == '__main__':
         for param_ii,param in enumerate(cal_labels):
             print('\t{0}: {1}'.format(param,cal_offsets[param_ii]))
         print("-"*50)
+        print(cal_offsets)
         #
         ###################################
         # real-time plotter for validation

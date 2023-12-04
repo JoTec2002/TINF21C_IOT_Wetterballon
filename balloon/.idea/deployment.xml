@@ -2,20 +2,6 @@
 <project version="4">
   <component name="PublishConfigData" autoUpload="Always" serverName="iot@raspiiot:22 password" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="iot@192.168.137.193:22 password">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="iot@192.168.137.193:22 password (2)">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
       <paths name="iot@raspiiot:22 password">
         <serverdata>
           <mappings>
@@ -23,10 +9,10 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="iot@raspiiot:22 password (2)">
+      <paths name="pi@192.168.1.42:22 password">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/iot/code" local="$PROJECT_DIR$" />
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
