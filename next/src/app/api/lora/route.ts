@@ -45,8 +45,8 @@ export async function POST(req: NextRequest) {
                     time : new Date(String(body.received_at)),
                     source : 'lora',
                     satellites: null,
-                    speed: null,
-                    course : null,
+                    speed: parseFloat(String(body.decoded_payload.GPS.speed)),
+                    course : parseFloat(String(body.decoded_payload.GPS.course)),
                     altitude : parseFloat(String(body.decoded_payload.GPS.altitude)),
                     longitude : parseFloat(String(body.decoded_payload.GPS.longitude)),
                     latitude: parseFloat(String(body.decoded_payload.GPS.latitude))
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
             }
 
 
-            if (body.decoded_payload.airpressure !== undefined) {
+            if (body.decoded_payload.pressure !== undefined) {
                 await prisma.airpressure.create({data: {
                         flightId : flight!.id,
                         time : new Date(String(body.received_at)),
