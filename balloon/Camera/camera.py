@@ -38,7 +38,7 @@ class Camera:
 
             # sleep so that sensor values are read every 30 seconds
             time_run = (time.time_ns() - time_start) / 1_000_000_000
-            time_to_sleep = 30 - time_run
+            time_to_sleep = 60 - time_run
             if time_to_sleep > 0:
                 time.sleep(time_to_sleep)
 
