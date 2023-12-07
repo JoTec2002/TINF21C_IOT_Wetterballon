@@ -14,7 +14,6 @@ import TempHeightOutside from "@/components/charts/Height/TempHeightOutside";
 import HumidityHeightInside from "@/components/charts/Height/HumidityHeightInside";
 import HumidityHeightOutside from "@/components/charts/Height/HumidityHeightOutside";
 import ImageView from "@/components/image/imageView";
-import ImageGallery from "@/components/image/imageGallery";
 
 
 const BalloonMap = dynamic(() => import("@/components/BalloonMap"), {
@@ -41,7 +40,6 @@ const Dashboard = () => {
             <>
                 <BalloonMap locations={messure.gpsdata} />
                 <br/>
-                <ImageGallery images={messure.image} />
                 <ImageView images={messure.image} />
                 <br/>
                 <div id={"chart-view"} className={"content-center"}>
@@ -56,10 +54,8 @@ const Dashboard = () => {
                     <div className={"grid grid-cols-2"}>
                         <TempHeightInside tempIndoor={messure.height_temperature_indoor} />
                         <TempHeightOutside tempOutdoor={messure.height_temperature_outdoor} />
-
                         <HumidityHeightInside humIndoor={messure.height_humidity_indoor} />
                         <HumidityHeightOutside humOutdoor={messure.height_humidity_outdoor} />
-
                         <PressureHeight measures={messure.height_airpressure} />
                     </div>
                 </div>
