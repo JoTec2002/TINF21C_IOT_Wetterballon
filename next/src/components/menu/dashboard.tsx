@@ -39,10 +39,11 @@ const Dashboard = () => {
             :
             <>
                 <BalloonMap locations={messure.gpsdata} />
+
                 <br/>
                 <ImageView images={messure.image} />
-                <br/>
                 <div id={"chart-view"} className={"content-center"}>
+
                     <div className={"grid grid-cols-1"}>
                         <h1 className={"text-2xl font-bold text-blue-800 mb-0.5 mt-6 underline"}>Messwerte im Bezug zu Zeit:</h1>
                         <HeightTime locations={messure.gpsdata} />
