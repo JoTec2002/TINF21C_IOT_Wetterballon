@@ -40,7 +40,7 @@ const Dashboard = () => {
             <>
                 <BalloonMap locations={messure.gpsdata} />
                 <br/>
-                <ImageView images={messure.image}/>
+                <ImageView images={messure.image} />
                 <br/>
                 <div id={"chart-view"} className={"content-center"}>
                     <div className={"grid grid-cols-1"}>
@@ -54,10 +54,8 @@ const Dashboard = () => {
                     <div className={"grid grid-cols-2"}>
                         <TempHeightInside tempIndoor={messure.height_temperature_indoor} />
                         <TempHeightOutside tempOutdoor={messure.height_temperature_outdoor} />
-
                         <HumidityHeightInside humIndoor={messure.height_humidity_indoor} />
                         <HumidityHeightOutside humOutdoor={messure.height_humidity_outdoor} />
-
                         <PressureHeight measures={messure.height_airpressure} />
                     </div>
                 </div>

@@ -10,8 +10,14 @@ const Imageview = ({images}: { images: ImageObj[] }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [imageBase64, setImageBase64]  = useState('');
     const[imageId, setImageId] = useState(0)
+    const [isExpanded, setIsExpanded] = useState(false);
 
 
+
+
+    const handleExpand = () => {
+        setIsExpanded(!isExpanded);
+    };
 
 
 
@@ -31,18 +37,23 @@ const Imageview = ({images}: { images: ImageObj[] }) => {
 
     }, [imageId]);
 
+    const listItems = isExpanded
+        ? images.map((image) => (
+        <li key={image.id}>
+            <button className={"hover:text-blue-400"} key={image.id} onClick={(e) => {setImageId(image.id)}}>{"Bild: " + image.id + " - Datum: " + image.time}</button>
+        </li>
+    ))
+        : images.slice(0, 10).map((image, index) =>
+        <li key={image.id}>
+            <button className={"hover:text-blue-400"} key={image.id} onClick={(e) => {setImageId(image.id)}}>{"Bild: " + image.id + " - Datum: " + image.time}</button>
+        </li>)
+
     return (
         <>
             <h1 className={"text-2xl font-bold text-blue-800 mb-0.5 mt-6 underline"}>Vorhandene Bilder:</h1>
-            <li >
-                {
-                    images.map((image) => (
-                        <li key={image.id}>
-                            <button className={"hover:text-blue-400"} key={image.id} onClick={(e) => {setImageId(image.id)}}>{"Bild: " + image.id + " - Datum: " + image.time}</button>
-                        </li>
-                    ))
-                }
-            </li>
+            <ol> {listItems} </ol>
+            {images.length > 10 && !isExpanded && <button className={"bg-blue-500 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"} onClick={handleExpand}>Show all </button>}
+            {isExpanded && <button className={"bg-blue-500 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"} onClick={handleExpand}>Hide </button>}
             <Modal show={isVisible} onClose={() => {setIsVisible(false); setImageId(0)}}>
                 <Modal.Header>Bild:</Modal.Header>
                 <Modal.Body>
